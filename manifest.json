@@ -1,0 +1,17 @@
+{
+  "background_color": "#22634c",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Mera Udhar",
+  "orientation": "portrait",
+  "scope": "/",
+  "short_name": "lan den",
+  "start_url": "https://rashid1137.github.io/Mera-Udhar",
+  "theme_color": "#367588",
+  "id": "Udhar khata",
+  "description": "Mera Udhar Apps udhar ko monitor karta he or Yaad Rakhta he",
+  "lang": "hi",
+  "categories": [
+    "business"
+  ]
+}
