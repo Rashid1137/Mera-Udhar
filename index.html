@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <title>मेरा उधार</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        /* फुल स्क्रीन वेब लेआउट */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body, html { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; width: 100%; height: 100%; background-color: #f5f5f5; }
+        
+        .app-container { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; background: #f5f5f5; }
+        
+        /* --- प्रीमियम ऑथेंटिकेशन स्क्रीन्स --- */
+        .auth-bg { 
+            background: linear-gradient(135deg, #075E54 0%, #128C7E 100%); 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            padding: 20px;
+            height: 100%; overflow-y: auto;
+        }
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            width: 100%; max-width: 400px;
+            padding: 35px 25px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .app-logo {
+            width: 70px; height: 70px;
+            background: #e0f2f1;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            margin: 0 auto 15px auto;
+            font-size: 35px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .auth-card h2 { color: #128C7E; margin: 0 0 5px 0; font-size: 26px; font-weight: 800;}
+        .auth-card p.subtitle { color: #666; font-size: 14px; margin-bottom: 25px;}
+        
+        .auth-card label { text-align: left; display: block; font-weight: bold; color: #444; margin-bottom: 6px; font-size: 13px;}
+        .auth-card input, .auth-card select { 
+            width: 100%; padding: 14px 15px; font-size: 16px; 
+            border: 1.5px solid #ddd; border-radius: 10px; margin-bottom: 18px; 
+            background: #fafafa; outline: none; transition: all 0.3s;
+        }
+        .auth-card input:focus { border-color: #128C7E; background: white; box-shadow: 0 0 5px rgba(18,140,126,0.2);}
+        
+        .dob-group { display: flex; gap: 10px; margin-bottom: 18px; }
+        .dob-group select { margin-bottom: 0; padding: 12px; font-size: 14px; flex: 1;}
+
+        .btn-main { background: linear-gradient(to right, #128C7E, #0d6b60); color: white; border: none; padding: 15px; font-size: 17px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 5px; box-shadow: 0 4px 10px rgba(18, 140, 126, 0.4); transition: transform 0.2s;}
+        .btn-main:active { transform: scale(0.97); }
+        .auth-links { margin-top: 25px; font-size: 14px; color: #128C7E; font-weight: bold; }
+        .auth-links span { cursor: pointer; margin: 0 10px; display: inline-block; padding: 5px;}
+
+        /* हेडर (Top Bar) */
+        .header { background: #128C7E; color: white; padding: 16px 20px; font-size: 19px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; flex-shrink: 0;}
+        .header-icons { display: flex; gap: 18px; font-size: 22px; align-items: center; }
+        .header-icons span { cursor: pointer; display: flex; align-items: center; justify-content: center; transition: opacity 0.2s;}
+        .header-icons span:active { opacity: 0.6; }
+        .back-btn { background: none; border: none; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 5px; padding: 0; font-weight: bold;}
+        
+        /* डैशबोर्ड */
+        .dashboard { padding: 20px; background: #128C7E; color: white; flex-shrink: 0; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; margin-bottom: 10px;}
+        .summary-box { display: flex; justify-content: space-between; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .summary-item { text-align: center; flex: 1; }
+        .summary-item:first-child { border-right: 1px solid #eee; }
+        .text-green { color: #128C7E; font-weight: bold; font-size: 20px; margin-top: 5px; }
+        .text-red { color: #d32f2f; font-weight: bold; font-size: 20px; margin-top: 5px; }
+        
+        /* लिस्ट कंटेनर और आइटम्स */
+        .list-container { flex: 1; overflow-y: auto; background: #f5f5f5; padding-bottom: 90px; }
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #e0e0e0; cursor: pointer; background: white; margin: 0 10px 8px 10px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: background 0.2s;}
+        .list-item:active { background: #f0f0f0; }
+        .item-avatar { width: 45px; height: 45px; border-radius: 50%; color: white; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 20px; margin-right: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .item-name { font-size: 17px; font-weight: bold; color: #333; margin: 0; }
+        .item-amount { text-align: right; font-weight: bold; font-size: 17px;}
+        
+        /* फ्लोटिंग बटन (FAB) */
+        .fab { position: absolute; bottom: 25px; right: 20px; background: #128C7E; color: white; border: none; border-radius: 50px; padding: 15px 22px; font-size: 16px; font-weight: bold; box-shadow: 0 4px 12px rgba(18, 140, 126, 0.5); cursor: pointer; display: flex; align-items: center; gap: 8px;}
+        .fab:active { transform: scale(0.95); }
+        
+        /* डिटेल स्क्रीन */
+        .detail-header-info { text-align: center; padding: 15px; background: white; border-bottom: 1px solid #e0e0e0; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
+        .transaction-list { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 80px; display: flex; flex-direction: column; gap: 10px; background: #ece5dd; }
+        .txn-card { background: white; padding: 12px 15px; border-radius: 8px; max-width: 85%; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: relative;}
+        .txn-card.given { align-self: flex-end; border-top-right-radius: 0; }
+        .txn-card.received { align-self: flex-start; border-top-left-radius: 0; }
+        .txn-amount { font-size: 18px; font-weight: bold; margin: 0 0 5px 0; }
+        .txn-date { font-size: 11px; color: #888; margin: 0; text-align: right; }
+        
+        /* नीचे के एक्शन बटन्स */
+        .bottom-actions { position: absolute; bottom: 0; width: 100%; display: flex; background: white; padding: 12px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); gap: 12px; z-index: 10;}
+        .btn-action { flex: 1; padding: 15px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
+        .btn-action:active { transform: scale(0.98); }
+        .btn-give { background: #d32f2f; }
+        .btn-receive { background: #128C7E; }
+
+        /* अलर्ट बॉक्स */
+        .alert-banner { background: #ff9800; color: white; padding: 12px; text-align: center; font-size: 15px; font-weight: bold; cursor: pointer; flex-shrink: 0;}
+        
+        /* सेटिंग्स और प्रोफाइल स्क्रीन */
+        .settings-screen { padding: 20px; background: #f5f5f5; flex: 1; overflow-y: auto;}
+        .settings-card { background: white; padding: 18px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
+        .settings-card input, .settings-card select { width: 100%; padding: 14px; margin-top: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; background: #fafafa;}
+        
+        /* प्रोफाइल फोटो स्टाइल */
+        .profile-pic-wrapper { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
+        .profile-pic { width: 110px; height: 110px; border-radius: 50%; background-color: #e0e0e0; object-fit: cover; border: 4px solid #128C7E; margin-bottom: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);}
+        .upload-btn-wrapper { position: relative; overflow: hidden; display: inline-block; }
+        .upload-btn { border: 2px solid #128C7E; color: #128C7E; background-color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer;}
+        .upload-btn-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%; }
+
+        /* लोडर */
+        #loader { position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #128C7E; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div id="loader" class="hidden">
+    <div class="spinner"></div>
+    <p style="margin-top: 15px; font-weight: bold; color: #128C7E;">कृपया प्रतीक्षा करें...</p>
+</div>
+
+<div id="login-screen" class="app-container auth-bg">
+    <div class="auth-card">
+        <div class="app-logo">💸</div>
+        <h2>मेरा उधार</h2>
+        <p class="subtitle">सुरक्षित और आसान लेन-देन</p>
+        
+        <label>मोबाइल नंबर</label>
+        <input type="number" id="login-phone" placeholder="अपना नंबर दर्ज करें">
+        <label>पासवर्ड</label>
+        <input type="password" id="login-pass" placeholder="पासवर्ड दर्ज करें">
+        
+        <button class="btn-main" onclick="login()">लॉगिन करें</button>
+        
+        <div class="auth-links">
+            <span onclick="showScreen('register-screen')">नया अकाउंट बनाएं</span><br><br>
+            <span onclick="resetForgotUI(); showScreen('forgot-screen')" style="color: #888; font-size: 13px; font-weight:normal;">पासवर्ड भूल गए?</span>
+        </div>
+    </div>
+</div>
+
+<div id="register-screen" class="app-container auth-bg hidden">
+    <div class="auth-card">
+        <h2>नया अकाउंट</h2>
+        <p class="subtitle">अपनी जानकारी भरें</p>
+        
+        <label>पूरा नाम</label>
+        <input type="text" id="reg-name" placeholder="जैसे: Rashid Hussain">
+        <label>ईमेल आईडी</label>
+        <input type="email" id="reg-email" placeholder="अपनी ईमेल आईडी">
+        <label>मोबाइल नंबर</label>
+        <input type="number" id="reg-phone" placeholder="10 अंकों का नंबर">
+        <label>जन्मतिथि (DOB)</label>
+        <div class="dob-group">
+            <select id="reg-day"><option value="">दिन</option></select>
+            <select id="reg-month"><option value="">महीना</option></select>
+            <select id="reg-year"><option value="">साल</option></select>
+        </div>
+        <label>नया पासवर्ड</label>
+        <input type="password" id="reg-pass" placeholder="नया पासवर्ड बनाएं">
+        
+        <button class="btn-main" onclick="register()">रजिस्टर करें</button>
+        <div class="auth-links">
+            <span onclick="showScreen('login-screen')">पहले से अकाउंट है? लॉगिन करें</span>
+        </div>
+    </div>
+</div>
+
+<div id="forgot-screen" class="app-container auth-bg hidden">
+    <div class="auth-card">
+        <h2>पासवर्ड बदलें</h2>
+        <p class="subtitle">रिकवरी डिटेल्स डालें</p>
+        
+        <div id="forgot-step-1">
+            <label>रजिस्टर्ड मोबाइल नंबर</label>
+            <input type="number" id="forgot-phone" placeholder="अपना नंबर डालें">
+            <label>जन्मतिथि (DOB)</label>
+            <div class="dob-group">
+                <select id="forgot-day"><option value="">दिन</option></select>
+                <select id="forgot-month"><option value="">महीना</option></select>
+                <select id="forgot-year"><option value="">साल</option></select>
+            </div>
+            <button class="btn-main" onclick="verifyForReset()">वेरीफाई करें</button>
+        </div>
+
+        <div id="forgot-step-2" class="hidden">
+            <p style="color: #128C7E; font-weight: bold; margin-bottom: 15px;">✓ जानकारी सही है!</p>
+            <label>नया पासवर्ड</label>
+            <input type="password" id="reset-pass-new" placeholder="नया पासवर्ड डालें">
+            <label>पासवर्ड कंफर्म करें</label>
+            <input type="password" id="reset-pass-confirm" placeholder="पासवर्ड दोबारा डालें">
+            <button class="btn-main" onclick="updatePassword()">पासवर्ड सेव करें</button>
+        </div>
+
+        <div class="auth-links">
+            <span onclick="resetForgotUI(); showScreen('login-screen')" style="color: #888; font-weight:normal;">वापस लॉगिन पर जाएं</span>
+        </div>
+    </div>
+</div>
+
+<div id="main-app" class="app-container hidden">
+    
+    <div id="home-screen" style="height: 100%; display: flex; flex-direction: column;">
+        <div class="header">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <img id="header-profile-pic" src="" style="width: 32px; height: 32px; border-radius: 50%; display:none; object-fit: cover; border: 2px solid white;">
+                मेरा उधार
+            </div>
+            <div class="header-icons">
+                <span onclick="openSettings()" title="सेटिंग्स">⚙️</span>
+                <span onclick="doLogout()" title="लॉगआउट">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                        <line x1="12" y1="2" x2="12" y2="12"></line>
+                    </svg>
+                </span>
+            </div>
+        </div>
+
+        <div id="reminder-banner" class="alert-banner hidden" onclick="sendAllReminders()">
+            🔔 आज रिमाइंडर का दिन है!<br>
+            <span style="font-size: 13px; font-weight: normal;">आपका कुल बकाया है: <b id="banner-amount">₹0</b> (सबको WhatsApp करें)</span>
+        </div>
+
+        <div class="dashboard">
+            <div class="summary-box">
+                <div class="summary-item">
+                    <div style="color: #666; font-size: 14px;">मुझे मिलेंगे</div>
+                    <div id="total-receive" class="text-green">₹0</div>
+                </div>
+                <div class="summary-item">
+                    <div style="color: #666; font-size: 14px;">मुझे देने हैं</div>
+                    <div id="total-pay" class="text-red">₹0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-container" id="customer-list"></div>
+        <button class="fab" onclick="addNewCustomerDialog()">➕ ग्राहक जोड़ें</button>
+    </div>
+
+    <div id="settings-screen" style="height: 100%; display: flex; flex-direction: column;" class="hidden">
+        <div class="header">
+            <button class="back-btn" onclick="closeSettings()">← पीछे</button>
+            <div>मेरी सेटिंग्स</div>
+            <div style="width: 50px;"></div>
+        </div>
+        <div class="settings-screen">
+            <div class="settings-card">
+                <div class="profile-pic-wrapper">
+                    <img id="my-profile-pic" class="profile-pic" src="">
+                    <div class="upload-btn-wrapper">
+                        <button class="upload-btn">फोटो बदलें</button>
+                        <input type="file" id="image-upload" accept="image/*" onchange="previewImage(event)">
+                    </div>
+                </div>
+                <label style="font-weight: bold; color: #333;">नाम</label>
+                <input type="text" id="my-name" placeholder="अपना नाम">
+                <label style="font-weight: bold; color: #333; margin-top:10px; display:block;">ईमेल</label>
+                <input type="email" id="my-email" placeholder="अपनी ईमेल आईडी">
+                <label style="font-weight: bold; color: #333; margin-top:10px; display:block;">मोबाइल</label>
+                <input type="text" id="my-phone" readonly style="background-color: #e9ecef; color: #555;">
+            </div>
+
+            <div class="settings-card">
+                <label style="font-weight: bold; color: #333;">ऑनलाइन पेमेंट (UPI ID)</label>
+                <input type="text" id="my-upi-id" placeholder="जैसे: 9876543210@ybl">
+            </div>
+
+            <div class="settings-card">
+                <label style="font-weight: bold; color: #333;">मंथली रिमाइंडर की तारीख</label>
+                <input type="number" id="my-reminder-date" min="1" max="31" placeholder="तारीख (1 से 31)">
+            </div>
+            
+            <button class="btn-main" onclick="saveSettings()">सेव करें</button>
+        </div>
+    </div>
+
+    <div id="detail-screen" class="hidden" style="height: 100%; display: flex; flex-direction: column;">
+        <div class="header">
+            <button class="back-btn" onclick="showHomeScreen()">← पीछे</button>
+            <div id="detail-title">कस्टमर नाम</div>
+            <div style="display:flex; gap:15px; font-size: 22px; align-items:center;">
+                <span id="delete-customer-btn" style="cursor:pointer; display:none; font-size: 19px;" title="कस्टमर डिलीट करें" onclick="deleteCustomer()">🗑️</span>
+                <span style="cursor:pointer;" title="नॉर्मल Text Message भेजें" onclick="sendReminder('sms')">✉️</span>
+                <span style="cursor:pointer;" title="WhatsApp मैसेज भेजें" onclick="sendReminder('whatsapp')">💬</span>
+            </div>
+        </div>
+        
+        <div class="detail-header-info">
+            <div style="font-size: 14px; color: #555;">नेट बैलेंस</div>
+            <div id="detail-balance" style="font-size: 28px; font-weight: bold; margin-top: 5px;">₹0</div>
+        </div>
+
+        <div class="transaction-list" id="transaction-list"></div>
+
+        <div class="bottom-actions">
+            <button class="btn-action btn-give" onclick="promptTransaction('give')">मैंने दिए (-)</button>
+            <button class="btn-action btn-receive" onclick="promptTransaction('receive')">मैंने लिए (+)</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ==========================================
+    // 🔴 FIREBASE CONFIGURATION 
+    // ==========================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyAnKoV311I1ICjFA--Jg5zfk8CV2xdDvF8",
+        authDomain: "mera-udhar-10468.firebaseapp.com",
+        databaseURL: "https://mera-udhar-10468-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "mera-udhar-10468",
+        storageBucket: "mera-udhar-10468.firebasestorage.app",
+        messagingSenderId: "309062155511",
+        appId: "1:309062155511:web:f4cf2278cc390e1240e7f2",
+        measurementId: "G-ZM8CGRHPXB"
+    };
+    
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+    // ==========================================
+
+    let currentUserPhone = null;
+    let userData = null; 
+    let currentCustomer = null;
+    let totalOutstanding = 0;
+    let resetTargetPhone = null; 
+    
+    const DEFAULT_PIC = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23ccc'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+
+    window.onload = function() {
+        let days = '<option value="">दिन</option>';
+        for(let i=1; i<=31; i++) days += `<option value="${i}">${i}</option>`;
+        let months = '<option value="">महीना</option>';
+        let mNames = ["जनवरी", "फ़रवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितम्बर", "अक्टूबर", "नवम्बर", "दिसम्बर"];
+        for(let i=0; i<12; i++) months += `<option value="${i+1}">${mNames[i]}</option>`;
+        let years = '<option value="">साल</option>';
+        for(let i=new Date().getFullYear(); i>=1950; i--) years += `<option value="${i}">${i}</option>`;
+        
+        document.getElementById('reg-day').innerHTML = days;
+        document.getElementById('reg-month').innerHTML = months;
+        document.getElementById('reg-year').innerHTML = years;
+        document.getElementById('forgot-day').innerHTML = days;
+        document.getElementById('forgot-month').innerHTML = months;
+        document.getElementById('forgot-year').innerHTML = years;
+        
+        // Auto-login (Back / Background issue FIX)
+        let savedPhone = localStorage.getItem('udhar_logged_in_phone');
+        let savedPass = localStorage.getItem('udhar_logged_in_pass');
+        
+        if(savedPhone && savedPass) {
+            document.getElementById('login-phone').value = savedPhone;
+            document.getElementById('login-pass').value = savedPass;
+            login(); 
+        }
+    };
+
+    function showLoader(show) {
+        document.getElementById('loader').classList.toggle('hidden', !show);
+    }
+
+    function getAvatarColor(name) {
+        const colors = ['#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#00bcd4', '#009688', '#4caf50', '#ff9800', '#ff5722', '#795548', '#f44336'];
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        return colors[Math.abs(hash) % colors.length];
+    }
+
+    function showScreen(screenId) {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('register-screen').classList.add('hidden');
+        document.getElementById('forgot-screen').classList.add('hidden');
+        document.getElementById('main-app').classList.add('hidden');
+        document.getElementById(screenId).classList.remove('hidden');
+    }
+
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var output = document.getElementById('my-profile-pic');
+            output.src = reader.result;
+            userData.profilePic = reader.result;
+        }
+        if(event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function updateHeaderProfilePic() {
+        let headPic = document.getElementById('header-profile-pic');
+        if(userData.profilePic && userData.profilePic !== "") {
+            headPic.src = userData.profilePic;
+            headPic.style.display = 'block';
+        } else {
+            headPic.style.display = 'none';
+        }
+    }
+
+    async function register() {
+        let name = document.getElementById('reg-name').value.trim();
+        let email = document.getElementById('reg-email').value.trim();
+        let phone = document.getElementById('reg-phone').value.trim();
+        let d = document.getElementById('reg-day').value;
+        let m = document.getElementById('reg-month').value;
+        let y = document.getElementById('reg-year').value;
+        let pass = document.getElementById('reg-pass').value.trim();
+
+        if (!name || phone.length < 10 || !d || !m || !y || pass.length < 4) {
+            return alert("कृपया सभी जानकारी सही से भरें!");
+        }
+
+        showLoader(true);
+        try {
+            let snapshot = await db.ref('users/' + phone).once('value');
+            if (snapshot.exists()) {
+                showLoader(false);
+                return alert("यह नंबर पहले से रजिस्टर है! कृपया लॉगिन करें।");
+            }
+
+            let dob = `${d}-${m}-${y}`;
+            let newUserData = { name: name, email: email, dob: dob, password: pass, profilePic: "", upiId: "", reminderDate: 1, customers: {} };
+            
+            await db.ref('users/' + phone).set(newUserData);
+            showLoader(false);
+            alert("अकाउंट सफलतापूर्वक बन गया! अब आप लॉगिन कर सकते हैं।");
+            showScreen('login-screen');
+            document.getElementById('login-phone').value = phone;
+        } catch(e) {
+            showLoader(false);
+            alert("डेटाबेस से जुड़ने में एरर। क्या आपने Firebase Config Keys डाली हैं?");
+        }
+    }
+
+    async function login() {
+        let phone = document.getElementById('login-phone').value.trim();
+        let pass = document.getElementById('login-pass').value.trim();
+
+        if(phone === "" || pass === "") return alert("नंबर और पासवर्ड डालें!");
+
+        showLoader(true);
+        try {
+            let snapshot = await db.ref('users/' + phone).once('value');
+            if (!snapshot.exists()) {
+                showLoader(false);
+                return alert("यह नंबर रजिस्टर नहीं है!");
+            }
+            
+            let data = snapshot.val();
+            if (data.password !== pass) {
+                showLoader(false);
+                return alert("पासवर्ड गलत है!");
+            }
+
+            currentUserPhone = phone;
+            userData = data;
+            if(!userData.customers) userData.customers = {};
+            
+            localStorage.setItem('udhar_logged_in_phone', phone);
+            localStorage.setItem('udhar_logged_in_pass', pass);
+            
+            showLoader(false);
+            showScreen('main-app');
+            updateHeaderProfilePic();
+            renderHomeScreen();
+        } catch(e) {
+            showLoader(false);
+            alert("डेटाबेस एरर। Firebase Config चेक करें।");
+        }
+    }
+
+    function resetForgotUI() {
+        document.getElementById('forgot-step-1').classList.remove('hidden');
+        document.getElementById('forgot-step-2').classList.add('hidden');
+        document.getElementById('forgot-phone').value = '';
+        document.getElementById('reset-pass-new').value = '';
+        document.getElementById('reset-pass-confirm').value = '';
+        resetTargetPhone = null;
+    }
+
+    async function verifyForReset() {
+        let phone = document.getElementById('forgot-phone').value.trim();
+        let d = document.getElementById('forgot-day').value;
+        let m = document.getElementById('forgot-month').value;
+        let y = document.getElementById('forgot-year').value;
+
+        if (!d || !m || !y || phone === "") return alert("जानकारी पूरी डालें!");
+        let dob = `${d}-${m}-${y}`;
+
+        showLoader(true);
+        try {
+            let snapshot = await db.ref('users/' + phone).once('value');
+            showLoader(false);
+            if (!snapshot.exists()) return alert("यह नंबर सिस्टम में नहीं है!");
+            
+            let data = snapshot.val();
+            if (data.dob === dob) {
+                resetTargetPhone = phone; 
+                document.getElementById('forgot-step-1').classList.add('hidden');
+                document.getElementById('forgot-step-2').classList.remove('hidden');
+            } else {
+                alert("गलत जन्मतिथि! कृपया सही जन्मतिथि डालें।");
+            }
+        } catch(e) {
+            showLoader(false);
+            alert("डेटाबेस एरर।");
+        }
+    }
+
+    async function updatePassword() {
+        let newPass = document.getElementById('reset-pass-new').value.trim();
+        let confirmPass = document.getElementById('reset-pass-confirm').value.trim();
+
+        if (newPass.length < 4) return alert("पासवर्ड कम से कम 4 अक्षरों का होना चाहिए!");
+        if (newPass !== confirmPass) return alert("पासवर्ड मैच नहीं हो रहे हैं!");
+
+        showLoader(true);
+        try {
+            await db.ref('users/' + resetTargetPhone + '/password').set(newPass);
+            showLoader(false);
+            alert("पासवर्ड सफलतापूर्वक बदल गया है! अब आप नए पासवर्ड से लॉगिन कर सकते हैं।");
+            
+            localStorage.removeItem('udhar_logged_in_pass');
+            
+            resetForgotUI();
+            showScreen('login-screen');
+            document.getElementById('login-phone').value = resetTargetPhone;
+        } catch (e) {
+            showLoader(false);
+            alert("पासवर्ड अपडेट करने में समस्या आई!");
+        }
+    }
+
+    function doLogout() {
+        if(confirm("क्या आप वाकई लॉगआउट करना चाहते हैं?")) {
+            currentUserPhone = null;
+            userData = null;
+            localStorage.removeItem('udhar_logged_in_phone');
+            localStorage.removeItem('udhar_logged_in_pass');
+            
+            document.getElementById('login-pass').value = '';
+            document.getElementById('settings-screen').classList.add('hidden');
+            document.getElementById('detail-screen').classList.add('hidden');
+            document.getElementById('home-screen').classList.remove('hidden');
+            showScreen('login-screen');
+        }
+    }
+
+    async function saveData() {
+        showLoader(true);
+        try {
+            await db.ref('users/' + currentUserPhone).set(userData);
+            showLoader(false);
+        } catch(e) {
+            showLoader(false);
+            alert("डेटा सेव करने में समस्या आई!");
+        }
+    }
+
+    function openSettings() {
+        document.getElementById('home-screen').classList.add('hidden');
+        document.getElementById('settings-screen').classList.remove('hidden');
+        
+        document.getElementById('my-name').value = userData.name || "";
+        document.getElementById('my-email').value = userData.email || "";
+        document.getElementById('my-phone').value = currentUserPhone;
+        document.getElementById('my-upi-id').value = userData.upiId || "";
+        document.getElementById('my-reminder-date').value = userData.reminderDate || 1;
+        
+        document.getElementById('my-profile-pic').src = (userData.profilePic && userData.profilePic !== "") ? userData.profilePic : DEFAULT_PIC;
+    }
+
+    function closeSettings() {
+        document.getElementById('settings-screen').classList.add('hidden');
+        document.getElementById('home-screen').classList.remove('hidden');
+    }
+
+    async function saveSettings() {
+        userData.name = document.getElementById('my-name').value.trim();
+        userData.email = document.getElementById('my-email').value.trim();
+        userData.upiId = document.getElementById('my-upi-id').value.trim();
+        
+        let rDate = parseInt(document.getElementById('my-reminder-date').value);
+        if(rDate >= 1 && rDate <= 31) userData.reminderDate = rDate;
+        else return alert("तारीख 1 से 31 के बीच होनी चाहिए!");
+        
+        await saveData();
+        updateHeaderProfilePic();
+        alert("प्रोफाइल सेव हो गई!");
+        closeSettings();
+        checkReminderAlert(); 
+    }
+
+    function checkReminderAlert() {
+        let today = new Date();
+        let reminderDiv = document.getElementById('reminder-banner');
+        
+        if (today.getDate() === parseInt(userData.reminderDate) && totalOutstanding > 0) {
+            reminderDiv.classList.remove('hidden');
+            document.getElementById('banner-amount').innerText = `₹${totalOutstanding}`;
+            
+            let lastReminded = localStorage.getItem(`lastAutoReminder_${currentUserPhone}`);
+            let dateString = today.toDateString();
+            if (lastReminded !== dateString) {
+                setTimeout(() => {
+                    if(confirm(`आज रिमाइंडर का दिन है!\nआपका कुल बकाया ₹${totalOutstanding} है।\n\nक्या आप अभी सबको WhatsApp पर ऑटो-रिमाइंडर भेजना चाहते हैं?`)) {
+                        sendAllReminders();
+                    }
+                    localStorage.setItem(`lastAutoReminder_${currentUserPhone}`, dateString);
+                }, 800);
+            }
+        } else {
+            reminderDiv.classList.add('hidden');
+        }
+    }
+
+    function renderHomeScreen() {
+        document.getElementById('home-screen').classList.remove('hidden');
+        document.getElementById('detail-screen').classList.add('hidden');
+        
+        const listDiv = document.getElementById('customer-list');
+        listDiv.innerHTML = '';
+        
+        let totalReceive = 0; let totalPay = 0;
+        let custArray = Object.keys(userData.customers || {}).map(name => { return { name: name, ...userData.customers[name] }; });
+        
+        custArray.forEach(cust => {
+            if (cust.balance > 0) totalReceive += cust.balance;
+            if (cust.balance < 0) totalPay += Math.abs(cust.balance);
+
+            let amountClass = cust.balance > 0 ? 'text-green' : (cust.balance < 0 ? 'text-red' : '');
+            let amountText = cust.balance > 0 ? `₹${cust.balance}` : (cust.balance < 0 ? `₹${Math.abs(cust.balance)}` : `₹0`);
+            let avatarBgColor = getAvatarColor(cust.name); 
+            
+            listDiv.innerHTML += `
+                <div class="list-item" onclick="openCustomerDetail('${cust.name}')">
+                    <div style="display:flex; align-items:center;">
+                        <div class="item-avatar" style="background-color: ${avatarBgColor};">${cust.name.charAt(0).toUpperCase()}</div>
+                        <div class="item-name">${cust.name}</div>
+                    </div>
+                    <div class="item-amount ${amountClass}">${amountText}</div>
+                </div>
+            `;
+        });
+
+        totalOutstanding = totalReceive;
+        document.getElementById('total-receive').innerText = `₹${totalReceive}`;
+        document.getElementById('total-pay').innerText = `₹${totalPay}`;
+        
+        checkReminderAlert();
+    }
+
+    // --- कॉन्टैक्ट लिस्ट से ग्राहक चुनना ---
+    async function addNewCustomerDialog() {
+        const supported = ('contacts' in navigator && 'ContactsManager' in window);
+        let name = "";
+        let mobile = "";
+
+        if (supported) {
+            if (confirm("क्या आप फोन की कॉन्टैक्ट लिस्ट से ग्राहक चुनना चाहते हैं?\n(Cancel दबाने पर खुद टाइप कर सकते हैं)")) {
+                try {
+                    const props = ['name', 'tel'];
+                    const opts = { multiple: false };
+                    const contacts = await navigator.contacts.select(props, opts);
+                    if (contacts.length > 0) {
+                        name = contacts[0].name[0];
+                        if (contacts[0].tel && contacts[0].tel.length > 0) {
+                            let cleanMobile = contacts[0].tel[0].replace(/\D/g, ''); 
+                            if(cleanMobile.length > 10) {
+                                cleanMobile = cleanMobile.slice(-10); 
+                            }
+                            mobile = cleanMobile;
+                        }
+                    } else {
+                        return;
+                    }
+                } catch (ex) {
+                    alert("कॉन्टैक्ट खोलने में समस्या आई, कृपया मैन्युअली टाइप करें।");
+                }
+            }
+        }
+
+        if (!name) {
+            name = prompt("नए ग्राहक का नाम दर्ज करें:");
+            if (!name || name.trim() === "") return;
+            name = name.trim();
+        }
+
+        if (!userData.customers) userData.customers = {};
+        if (!userData.customers[name]) {
+            if (!mobile) {
+                mobile = prompt(`ग्राहक '${name}' का मोबाइल नंबर (WhatsApp/SMS के लिए):`);
+            }
+            userData.customers[name] = { mobile: mobile || "", balance: 0, transactions: [] };
+            await saveData();
+            openCustomerDetail(name);
+        } else {
+            alert("यह नाम पहले से मौजूद है!");
+            openCustomerDetail(name);
+        }
+    }
+
+    function openCustomerDetail(name) {
+        currentCustomer = name;
+        document.getElementById('home-screen').classList.add('hidden');
+        document.getElementById('detail-screen').classList.remove('hidden');
+        document.getElementById('detail-title').innerText = name;
+        renderTransactions();
+    }
+
+    function showHomeScreen() {
+        currentCustomer = null;
+        renderHomeScreen();
+    }
+
+    function renderTransactions() {
+        const txnList = document.getElementById('transaction-list');
+        txnList.innerHTML = '';
+        let custData = userData.customers[currentCustomer];
+        if(!custData.transactions) custData.transactions = [];
+        
+        let balDiv = document.getElementById('detail-balance');
+        if(custData.balance > 0) balDiv.innerHTML = `<span style="color:#128C7E">₹${custData.balance} (मिलेंगे)</span>`;
+        else if (custData.balance < 0) balDiv.innerHTML = `<span style="color:#d32f2f">₹${Math.abs(custData.balance)} (देने हैं)</span>`;
+        else balDiv.innerHTML = `<span style="color:#333">₹0 (हिसाब बराबर)</span>`;
+
+        let deleteBtn = document.getElementById('delete-customer-btn');
+        if(custData.balance === 0) {
+            deleteBtn.style.display = 'inline-block';
+        } else {
+            deleteBtn.style.display = 'none';
+        }
+
+        custData.transactions.forEach(txn => {
+            let isGiven = txn.type === 'give';
+            txnList.innerHTML += `
+                <div class="txn-card ${isGiven ? 'given' : 'received'}">
+                    <p class="txn-amount" style="color: ${isGiven ? '#d32f2f' : '#128C7E'}">₹${txn.amount}</p>
+                    <p style="font-size: 12px; margin:0 0 5px 0; color: #555;">${isGiven ? 'आपने दिए' : 'आपको मिले'}</p>
+                    <p class="txn-date">${txn.date}</p>
+                </div>
+            `;
+        });
+        txnList.scrollTop = txnList.scrollHeight;
+    }
+
+    async function promptTransaction(type) {
+        let amountStr = prompt(`कितनी रकम ${type === 'give' ? 'दी' : 'मिली'}? (₹ में)`);
+        if (!amountStr) return;
+        let amount = parseFloat(amountStr);
+        if (isNaN(amount) || amount <= 0) return;
+
+        let securityPin = prompt("सुरक्षा के लिए अपना लॉगिन पासवर्ड (PIN) दर्ज करें:");
+        if (securityPin !== userData.password) {
+            alert("पासवर्ड गलत है! लेन-देन रद्द कर दिया गया।");
+            return; 
+        }
+
+        let dateObj = new Date();
+        let dateStr = dateObj.getDate() + '/' + (dateObj.getMonth()+1) + '/' + dateObj.getFullYear() + ' ' + dateObj.getHours() + ':' + dateObj.getMinutes();
+        
+        if (type === 'give') userData.customers[currentCustomer].balance += amount; 
+        else userData.customers[currentCustomer].balance -= amount;
+
+        if(!userData.customers[currentCustomer].transactions) userData.customers[currentCustomer].transactions = [];
+        userData.customers[currentCustomer].transactions.push({ type: type, amount: amount, date: dateStr });
+        
+        await saveData();
+        renderTransactions();
+    }
+
+    async function deleteCustomer() {
+        let custData = userData.customers[currentCustomer];
+        if (custData.balance !== 0) {
+            alert("इस कस्टमर का बैलेंस अभी ₹0 नहीं है। कृपया पहले हिसाब बराबर करें।");
+            return;
+        }
+
+        if(confirm(`क्या आप वाकई '${currentCustomer}' को हमेशा के लिए डिलीट करना चाहते हैं?`)) {
+            delete userData.customers[currentCustomer];
+            await saveData();
+            alert("कस्टमर सफलतापूर्वक डिलीट हो गया!");
+            showHomeScreen();
+        }
+    }
+
+    function sendReminder(type) {
+        let cust = userData.customers[currentCustomer];
+        if(!cust.mobile) return alert("इस कस्टमर का मोबाइल नंबर सेव नहीं है।");
+        
+        let msg = "";
+        if(cust.balance > 0) {
+            msg = `*रिमाइंडर / Payment Reminder*\n\nनमस्ते ${currentCustomer},\nआपके खाते का बकाया (Due Amount) ₹${cust.balance} है। कृपया अपना भुगतान जल्द से जल्द करें।\n`;
+            if(userData.upiId && userData.upiId.trim() !== "") {
+                msg += `\n*ऑनलाइन पेमेंट करने के लिए नीचे दिए गए लिंक पर क्लिक करें:*\nupi://pay?pa=${userData.upiId}&pn=${encodeURIComponent(userData.name || 'Store')}&am=${cust.balance}&cu=INR`;
+            }
+        } else if (cust.balance < 0) {
+            msg = `नमस्ते ${currentCustomer},\nमुझे आपको ₹${Math.abs(cust.balance)} देने हैं।`;
+        } else {
+            msg = `नमस्ते ${currentCustomer},\nहमारा खाता एकदम क्लियर है (₹0)।`;
+        }
+
+        if (type === 'whatsapp') {
+            window.open(`https://api.whatsapp.com/send?phone=91${cust.mobile}&text=${encodeURIComponent(msg)}`, '_blank');
+        } else if (type === 'sms') {
+            let smsMsg = msg.replace(/\*/g, '');
+            window.open(`sms:91${cust.mobile}?body=${encodeURIComponent(smsMsg)}`, '_self');
+        }
+    }
+
+    function sendAllReminders() {
+        for (let name in userData.customers) {
+            let cust = userData.customers[name];
+            if (cust.balance > 0 && cust.mobile) {
+                let msg = `*रिमाइंडर / Payment Reminder*\n\nनमस्ते ${name},\nआपके खाते का बकाया (Due Amount) ₹${cust.balance} है। कृपया अपना भुगतान जल्द से जल्द करें।`;
+                if(userData.upiId && userData.upiId.trim() !== "") {
+                    msg += `\n\n*ऑनलाइन पेमेंट करने के लिए नीचे दिए गए लिंक पर क्लिक करें:*\nupi://pay?pa=${userData.upiId}&pn=${encodeURIComponent(userData.name || 'Store')}&am=${cust.balance}&cu=INR`;
+                }
+                window.open(`https://api.whatsapp.com/send?phone=91${cust.mobile}&text=${encodeURIComponent(msg)}`, '_blank');
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
