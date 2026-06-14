@@ -21,43 +21,16 @@
         .app-container { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; background: #f5f5f5; }
         
         /* --- प्रीमियम ऑथेंटिकेशन स्क्रीन्स --- */
-        .auth-bg { 
-            background: linear-gradient(135deg, #075E54 0%, #128C7E 100%); 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            padding: 20px;
-            height: 100%; overflow-y: auto;
-        }
-        .auth-card {
-            background: rgba(255, 255, 255, 0.95);
-            width: 100%; max-width: 400px;
-            padding: 35px 25px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-        .app-logo {
-            width: 70px; height: 70px;
-            background: #e0f2f1;
-            border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            margin: 0 auto 15px auto;
-            font-size: 35px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
+        .auth-bg { background: linear-gradient(135deg, #075E54 0%, #128C7E 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; height: 100%; overflow-y: auto;}
+        .auth-card { background: rgba(255, 255, 255, 0.95); width: 100%; max-width: 400px; padding: 35px 25px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); text-align: center;}
+        .app-logo { width: 70px; height: 70px; background: #e0f2f1; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 15px auto; font-size: 35px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .auth-card h2 { color: #128C7E; margin: 0 0 5px 0; font-size: 26px; font-weight: 800;}
         .auth-card p.subtitle { color: #666; font-size: 14px; margin-bottom: 25px;}
-        
         .auth-card label { text-align: left; display: block; font-weight: bold; color: #444; margin-bottom: 6px; font-size: 13px;}
-        .auth-card input, .auth-card select { 
-            width: 100%; padding: 14px 15px; font-size: 16px; 
-            border: 1.5px solid #ddd; border-radius: 10px; margin-bottom: 18px; 
-            background: #fafafa; outline: none; transition: all 0.3s;
-        }
+        .auth-card input, .auth-card select { width: 100%; padding: 14px 15px; font-size: 16px; border: 1.5px solid #ddd; border-radius: 10px; margin-bottom: 18px; background: #fafafa; outline: none; transition: all 0.3s;}
         .auth-card input:focus { border-color: #128C7E; background: white; box-shadow: 0 0 5px rgba(18,140,126,0.2);}
-        
         .dob-group { display: flex; gap: 10px; margin-bottom: 18px; }
         .dob-group select { margin-bottom: 0; padding: 12px; font-size: 14px; flex: 1;}
-
         .btn-main { background: linear-gradient(to right, #128C7E, #0d6b60); color: white; border: none; padding: 15px; font-size: 17px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 5px; box-shadow: 0 4px 10px rgba(18, 140, 126, 0.4); transition: transform 0.2s;}
         .btn-main:active { transform: scale(0.97); }
         .auth-links { margin-top: 25px; font-size: 14px; color: #128C7E; font-weight: bold; }
@@ -83,7 +56,7 @@
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #e0e0e0; cursor: pointer; background: white; margin: 0 10px 8px 10px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: background 0.2s;}
         .list-item:active { background: #f0f0f0; }
         .item-avatar { width: 45px; height: 45px; border-radius: 50%; color: white; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 20px; margin-right: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .item-name { font-size: 17px; font-weight: bold; color: #333; margin: 0; }
+        .item-name { font-size: 17px; font-weight: bold; color: #333; margin: 0; display: flex; align-items: center; gap: 5px;}
         .item-amount { text-align: right; font-weight: bold; font-size: 17px;}
         
         /* फ्लोटिंग बटन (FAB) */
@@ -108,7 +81,10 @@
 
         /* अलर्ट बॉक्स */
         .alert-banner { background: #ff9800; color: white; padding: 12px; text-align: center; font-size: 15px; font-weight: bold; cursor: pointer; flex-shrink: 0;}
+        .defaulter-alert { background: #d32f2f; color: white; padding: 10px; font-weight: bold; border-radius: 8px; margin-bottom: 12px; font-size: 14px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); animation: pulse 1.5s infinite;}
         
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
         /* सेटिंग्स और प्रोफाइल स्क्रीन */
         .settings-screen { padding: 20px; background: #f5f5f5; flex: 1; overflow-y: auto;}
         .settings-card { background: white; padding: 18px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
@@ -120,6 +96,13 @@
         .upload-btn-wrapper { position: relative; overflow: hidden; display: inline-block; }
         .upload-btn { border: 2px solid #128C7E; color: #128C7E; background-color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer;}
         .upload-btn-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%; }
+
+        /* कस्टम मॉडल (पॉप-अप) स्टाइल */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: flex; justify-content: center; align-items: center; }
+        .modal-box { background: white; padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative;}
+        .modal-box h3 { margin-top: 0; color: #128C7E; text-align: center; font-size: 22px;}
+        .btn-contact-picker { width: 100%; padding: 14px; background: #007bff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; margin-bottom: 15px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
+        .modal-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; font-size: 15px; }
 
         /* लोडर */
         #loader { position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
@@ -136,22 +119,42 @@
     <p style="margin-top: 15px; font-weight: bold; color: #128C7E;">कृपया प्रतीक्षा करें...</p>
 </div>
 
+<div id="add-customer-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+        <h3>नया ग्राहक जोड़ें</h3>
+        <button class="btn-contact-picker" onclick="pickFromContacts()">📱 फोन कॉन्टैक्ट से चुनें</button>
+        <div style="text-align: center; color: #888; font-size: 14px; margin-bottom: 15px;">— या खुद टाइप करें —</div>
+        
+        <div id="modal-defaulter-warning" class="defaulter-alert hidden"></div>
+        
+        <label style="font-size: 13px; font-weight:bold; color:#444;">मोबाइल नंबर (ऑटो-चेक के लिए)</label>
+        <input type="number" id="manual-cust-phone" class="modal-input" placeholder="10 अंकों का नंबर" oninput="autoCheckUser()">
+        
+        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px;">
+            <img id="auto-profile-pic" src="" class="hidden" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #128C7E;">
+            <input type="text" id="manual-cust-name" class="modal-input" placeholder="ग्राहक का नाम" style="margin-bottom: 0;">
+        </div>
+        
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button onclick="closeAddCustomerModal()" style="flex: 1; padding: 12px; background: #f44336; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">कैंसिल</button>
+            <button onclick="addManualCustomer()" style="flex: 1; padding: 12px; background: #128C7E; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">सेव करें</button>
+        </div>
+    </div>
+</div>
+
 <div id="login-screen" class="app-container auth-bg">
     <div class="auth-card">
         <div class="app-logo">💸</div>
         <h2>मेरा उधार</h2>
         <p class="subtitle">सुरक्षित और आसान लेन-देन</p>
-        
         <label>मोबाइल नंबर</label>
         <input type="number" id="login-phone" placeholder="अपना नंबर दर्ज करें">
         <label>पासवर्ड</label>
         <input type="password" id="login-pass" placeholder="पासवर्ड दर्ज करें">
-        
         <button class="btn-main" onclick="login()">लॉगिन करें</button>
-        
         <div class="auth-links">
-            <span onclick="showScreen('register-screen')">नया अकाउंट बनाएं</span><br><br>
-            <span onclick="resetForgotUI(); showScreen('forgot-screen')" style="color: #888; font-size: 13px; font-weight:normal;">पासवर्ड भूल गए?</span>
+            <span onclick="goToScreen('register-screen')">नया अकाउंट बनाएं</span><br><br>
+            <span onclick="resetForgotUI(); goToScreen('forgot-screen')" style="color: #888; font-size: 13px; font-weight:normal;">पासवर्ड भूल गए?</span>
         </div>
     </div>
 </div>
@@ -159,8 +162,6 @@
 <div id="register-screen" class="app-container auth-bg hidden">
     <div class="auth-card">
         <h2>नया अकाउंट</h2>
-        <p class="subtitle">अपनी जानकारी भरें</p>
-        
         <label>पूरा नाम</label>
         <input type="text" id="reg-name" placeholder="जैसे: Rashid Hussain">
         <label>ईमेल आईडी</label>
@@ -175,10 +176,9 @@
         </div>
         <label>नया पासवर्ड</label>
         <input type="password" id="reg-pass" placeholder="नया पासवर्ड बनाएं">
-        
         <button class="btn-main" onclick="register()">रजिस्टर करें</button>
         <div class="auth-links">
-            <span onclick="showScreen('login-screen')">पहले से अकाउंट है? लॉगिन करें</span>
+            <span onclick="goToScreen('login-screen')">पहले से अकाउंट है? लॉगिन करें</span>
         </div>
     </div>
 </div>
@@ -186,8 +186,6 @@
 <div id="forgot-screen" class="app-container auth-bg hidden">
     <div class="auth-card">
         <h2>पासवर्ड बदलें</h2>
-        <p class="subtitle">रिकवरी डिटेल्स डालें</p>
-        
         <div id="forgot-step-1">
             <label>रजिस्टर्ड मोबाइल नंबर</label>
             <input type="number" id="forgot-phone" placeholder="अपना नंबर डालें">
@@ -199,7 +197,6 @@
             </div>
             <button class="btn-main" onclick="verifyForReset()">वेरीफाई करें</button>
         </div>
-
         <div id="forgot-step-2" class="hidden">
             <p style="color: #128C7E; font-weight: bold; margin-bottom: 15px;">✓ जानकारी सही है!</p>
             <label>नया पासवर्ड</label>
@@ -208,9 +205,8 @@
             <input type="password" id="reset-pass-confirm" placeholder="पासवर्ड दोबारा डालें">
             <button class="btn-main" onclick="updatePassword()">पासवर्ड सेव करें</button>
         </div>
-
         <div class="auth-links">
-            <span onclick="resetForgotUI(); showScreen('login-screen')" style="color: #888; font-weight:normal;">वापस लॉगिन पर जाएं</span>
+            <span onclick="resetForgotUI(); goToScreen('login-screen')" style="color: #888; font-weight:normal;">वापस लॉगिन पर जाएं</span>
         </div>
     </div>
 </div>
@@ -224,7 +220,7 @@
                 मेरा उधार
             </div>
             <div class="header-icons">
-                <span onclick="openSettings()" title="सेटिंग्स">⚙️</span>
+                <span onclick="goToScreen('settings-screen')" title="सेटिंग्स">⚙️</span>
                 <span onclick="doLogout()" title="लॉगआउट">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
@@ -235,8 +231,7 @@
         </div>
 
         <div id="reminder-banner" class="alert-banner hidden" onclick="sendAllReminders()">
-            🔔 आज रिमाइंडर का दिन है!<br>
-            <span style="font-size: 13px; font-weight: normal;">आपका कुल बकाया है: <b id="banner-amount">₹0</b> (सबको WhatsApp करें)</span>
+            🔔 आज रिमाइंडर का दिन है! <br><span style="font-size: 13px; font-weight: normal;">कुल बकाया: <b id="banner-amount">₹0</b></span>
         </div>
 
         <div class="dashboard">
@@ -253,12 +248,12 @@
         </div>
 
         <div class="list-container" id="customer-list"></div>
-        <button class="fab" onclick="addNewCustomerDialog()">➕ ग्राहक जोड़ें</button>
+        <button class="fab" onclick="showAddCustomerModal()">➕ ग्राहक जोड़ें</button>
     </div>
 
     <div id="settings-screen" style="height: 100%; display: flex; flex-direction: column;" class="hidden">
         <div class="header">
-            <button class="back-btn" onclick="closeSettings()">← पीछे</button>
+            <button class="back-btn" onclick="window.history.back()">← पीछे</button>
             <div>मेरी सेटिंग्स</div>
             <div style="width: 50px;"></div>
         </div>
@@ -278,33 +273,34 @@
                 <label style="font-weight: bold; color: #333; margin-top:10px; display:block;">मोबाइल</label>
                 <input type="text" id="my-phone" readonly style="background-color: #e9ecef; color: #555;">
             </div>
-
             <div class="settings-card">
                 <label style="font-weight: bold; color: #333;">ऑनलाइन पेमेंट (UPI ID)</label>
                 <input type="text" id="my-upi-id" placeholder="जैसे: 9876543210@ybl">
             </div>
-
             <div class="settings-card">
                 <label style="font-weight: bold; color: #333;">मंथली रिमाइंडर की तारीख</label>
                 <input type="number" id="my-reminder-date" min="1" max="31" placeholder="तारीख (1 से 31)">
             </div>
-            
             <button class="btn-main" onclick="saveSettings()">सेव करें</button>
         </div>
     </div>
 
     <div id="detail-screen" class="hidden" style="height: 100%; display: flex; flex-direction: column;">
         <div class="header">
-            <button class="back-btn" onclick="showHomeScreen()">← पीछे</button>
-            <div id="detail-title">कस्टमर नाम</div>
-            <div style="display:flex; gap:15px; font-size: 22px; align-items:center;">
-                <span id="delete-customer-btn" style="cursor:pointer; display:none; font-size: 19px;" title="कस्टमर डिलीट करें" onclick="deleteCustomer()">🗑️</span>
-                <span style="cursor:pointer;" title="नॉर्मल Text Message भेजें" onclick="sendReminder('sms')">✉️</span>
-                <span style="cursor:pointer;" title="WhatsApp मैसेज भेजें" onclick="sendReminder('whatsapp')">💬</span>
+            <button class="back-btn" onclick="window.history.back()">← पीछे</button>
+            <div id="detail-title" style="flex: 1; text-align: left; margin-left: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">नाम</div>
+            
+            <div style="display:flex; gap:12px; font-size: 19px; align-items:center;">
+                <span style="cursor:pointer;" title="कस्टमर एडिट करें" onclick="editCustomerDetails()">✏️</span>
+                <span style="cursor:pointer;" title="डिफॉल्टर घोषित करें" onclick="markAsDefaulter()">🚩</span>
+                <span id="delete-customer-btn" style="cursor:pointer; display:none;" title="डिलीट करें" onclick="deleteCustomer()">🗑️</span>
+                <span style="cursor:pointer;" title="नॉर्मल Text Message" onclick="sendReminder('sms')">✉️</span>
+                <span style="cursor:pointer;" title="WhatsApp मैसेज" onclick="sendReminder('whatsapp')">💬</span>
             </div>
         </div>
         
         <div class="detail-header-info">
+            <div id="detail-phone" style="font-size: 12px; color: #777; margin-bottom: 5px;"></div>
             <div style="font-size: 14px; color: #555;">नेट बैलेंस</div>
             <div id="detail-balance" style="font-size: 28px; font-weight: bold; margin-top: 5px;">₹0</div>
         </div>
@@ -316,7 +312,6 @@
             <button class="btn-action btn-receive" onclick="promptTransaction('receive')">मैंने लिए (+)</button>
         </div>
     </div>
-
 </div>
 
 <script>
@@ -334,21 +329,60 @@
         measurementId: "G-ZM8CGRHPXB"
     };
     
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.database();
-    // ==========================================
-
+    
     let currentUserPhone = null;
     let userData = null; 
     let currentCustomer = null;
     let totalOutstanding = 0;
     let resetTargetPhone = null; 
+    let globalDefaulters = {}; // NEW: Store all defaulters
     
     const DEFAULT_PIC = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23ccc'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
+    // ==========================================
+    // 🔴 ROUTER (BACK BUTTON HANDLING) 
+    // ==========================================
+    let activeScreenId = 'login-screen';
+
+    function renderScreenDOM(screenId) {
+        ['login-screen', 'register-screen', 'forgot-screen', 'main-app'].forEach(id => document.getElementById(id).classList.add('hidden'));
+        
+        if (['home-screen', 'settings-screen', 'detail-screen'].includes(screenId)) {
+            document.getElementById('main-app').classList.remove('hidden');
+            document.getElementById('home-screen').classList.toggle('hidden', screenId !== 'home-screen');
+            document.getElementById('settings-screen').classList.toggle('hidden', screenId !== 'settings-screen');
+            document.getElementById('detail-screen').classList.toggle('hidden', screenId !== 'detail-screen');
+        } else {
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+        activeScreenId = screenId;
+    }
+
+    function goToScreen(screenId) {
+        history.pushState({ screen: screenId }, "", "#" + screenId);
+        renderScreenDOM(screenId);
+    }
+
+    window.onpopstate = function(event) {
+        if (event.state && event.state.screen) {
+            // BACK BUTTON CONFIRMATION ON HOME SCREEN
+            if (activeScreenId === 'home-screen') {
+                if (confirm("क्या आप ऐप से बाहर निकलना चाहते हैं? (Yes / No)")) {
+                    window.close(); // Close browser window/PWA
+                } else {
+                    history.pushState({ screen: 'home-screen' }, "", "#home-screen");
+                }
+            } else {
+                renderScreenDOM(event.state.screen);
+            }
+        }
+    };
+
     window.onload = function() {
+        history.replaceState({ screen: 'login-screen' }, "", "#login-screen");
+        
         let days = '<option value="">दिन</option>';
         for(let i=1; i<=31; i++) days += `<option value="${i}">${i}</option>`;
         let months = '<option value="">महीना</option>';
@@ -357,287 +391,138 @@
         let years = '<option value="">साल</option>';
         for(let i=new Date().getFullYear(); i>=1950; i--) years += `<option value="${i}">${i}</option>`;
         
-        document.getElementById('reg-day').innerHTML = days;
-        document.getElementById('reg-month').innerHTML = months;
-        document.getElementById('reg-year').innerHTML = years;
-        document.getElementById('forgot-day').innerHTML = days;
-        document.getElementById('forgot-month').innerHTML = months;
-        document.getElementById('forgot-year').innerHTML = years;
+        document.getElementById('reg-day').innerHTML = days; document.getElementById('reg-month').innerHTML = months; document.getElementById('reg-year').innerHTML = years;
+        document.getElementById('forgot-day').innerHTML = days; document.getElementById('forgot-month').innerHTML = months; document.getElementById('forgot-year').innerHTML = years;
         
-        // Auto-login (Back / Background issue FIX)
         let savedPhone = localStorage.getItem('udhar_logged_in_phone');
         let savedPass = localStorage.getItem('udhar_logged_in_pass');
-        
         if(savedPhone && savedPass) {
-            document.getElementById('login-phone').value = savedPhone;
-            document.getElementById('login-pass').value = savedPass;
+            document.getElementById('login-phone').value = savedPhone; document.getElementById('login-pass').value = savedPass;
             login(); 
         }
     };
 
-    function showLoader(show) {
-        document.getElementById('loader').classList.toggle('hidden', !show);
-    }
+    function showLoader(show) { document.getElementById('loader').classList.toggle('hidden', !show); }
 
     function getAvatarColor(name) {
         const colors = ['#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#00bcd4', '#009688', '#4caf50', '#ff9800', '#ff5722', '#795548', '#f44336'];
-        let hash = 0;
-        for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        let hash = 0; for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
         return colors[Math.abs(hash) % colors.length];
-    }
-
-    function showScreen(screenId) {
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('register-screen').classList.add('hidden');
-        document.getElementById('forgot-screen').classList.add('hidden');
-        document.getElementById('main-app').classList.add('hidden');
-        document.getElementById(screenId).classList.remove('hidden');
-    }
-
-    function previewImage(event) {
-        var reader = new FileReader();
-        reader.onload = function() {
-            var output = document.getElementById('my-profile-pic');
-            output.src = reader.result;
-            userData.profilePic = reader.result;
-        }
-        if(event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
-    }
-
-    function updateHeaderProfilePic() {
-        let headPic = document.getElementById('header-profile-pic');
-        if(userData.profilePic && userData.profilePic !== "") {
-            headPic.src = userData.profilePic;
-            headPic.style.display = 'block';
-        } else {
-            headPic.style.display = 'none';
-        }
     }
 
     async function register() {
         let name = document.getElementById('reg-name').value.trim();
         let email = document.getElementById('reg-email').value.trim();
         let phone = document.getElementById('reg-phone').value.trim();
-        let d = document.getElementById('reg-day').value;
-        let m = document.getElementById('reg-month').value;
-        let y = document.getElementById('reg-year').value;
+        let d = document.getElementById('reg-day').value; let m = document.getElementById('reg-month').value; let y = document.getElementById('reg-year').value;
         let pass = document.getElementById('reg-pass').value.trim();
 
-        if (!name || phone.length < 10 || !d || !m || !y || pass.length < 4) {
-            return alert("कृपया सभी जानकारी सही से भरें!");
-        }
-
+        if (!name || phone.length < 10 || !d || !m || !y || pass.length < 4) return alert("कृपया सभी जानकारी सही से भरें!");
         showLoader(true);
         try {
             let snapshot = await db.ref('users/' + phone).once('value');
-            if (snapshot.exists()) {
-                showLoader(false);
-                return alert("यह नंबर पहले से रजिस्टर है! कृपया लॉगिन करें।");
-            }
+            if (snapshot.exists()) { showLoader(false); return alert("यह नंबर पहले से रजिस्टर है!"); }
 
             let dob = `${d}-${m}-${y}`;
             let newUserData = { name: name, email: email, dob: dob, password: pass, profilePic: "", upiId: "", reminderDate: 1, customers: {} };
-            
             await db.ref('users/' + phone).set(newUserData);
-            showLoader(false);
-            alert("अकाउंट सफलतापूर्वक बन गया! अब आप लॉगिन कर सकते हैं।");
-            showScreen('login-screen');
+            showLoader(false); alert("अकाउंट सफलतापूर्वक बन गया!"); goToScreen('login-screen');
             document.getElementById('login-phone').value = phone;
-        } catch(e) {
-            showLoader(false);
-            alert("डेटाबेस से जुड़ने में एरर। क्या आपने Firebase Config Keys डाली हैं?");
-        }
+        } catch(e) { showLoader(false); alert("डेटाबेस से जुड़ने में एरर।"); }
     }
 
     async function login() {
         let phone = document.getElementById('login-phone').value.trim();
         let pass = document.getElementById('login-pass').value.trim();
-
         if(phone === "" || pass === "") return alert("नंबर और पासवर्ड डालें!");
 
         showLoader(true);
         try {
             let snapshot = await db.ref('users/' + phone).once('value');
-            if (!snapshot.exists()) {
-                showLoader(false);
-                return alert("यह नंबर रजिस्टर नहीं है!");
-            }
-            
+            if (!snapshot.exists()) { showLoader(false); return alert("यह नंबर रजिस्टर नहीं है!"); }
             let data = snapshot.val();
-            if (data.password !== pass) {
-                showLoader(false);
-                return alert("पासवर्ड गलत है!");
-            }
+            if (data.password !== pass) { showLoader(false); return alert("पासवर्ड गलत है!"); }
 
-            currentUserPhone = phone;
-            userData = data;
+            currentUserPhone = phone; userData = data;
             if(!userData.customers) userData.customers = {};
+            localStorage.setItem('udhar_logged_in_phone', phone); localStorage.setItem('udhar_logged_in_pass', pass);
             
-            localStorage.setItem('udhar_logged_in_phone', phone);
-            localStorage.setItem('udhar_logged_in_pass', pass);
-            
-            showLoader(false);
-            showScreen('main-app');
-            updateHeaderProfilePic();
-            renderHomeScreen();
-        } catch(e) {
-            showLoader(false);
-            alert("डेटाबेस एरर। Firebase Config चेक करें।");
-        }
+            // NEW: Fetch all Defaulters on Login
+            let defSnap = await db.ref('defaulters').once('value');
+            if(defSnap.exists()) globalDefaulters = defSnap.val();
+
+            showLoader(false); goToScreen('home-screen');
+            updateHeaderProfilePic(); renderHomeScreen();
+        } catch(e) { showLoader(false); alert("डेटाबेस एरर।"); }
     }
 
+    // (Password Reset UI omitted for brevity, left intact)
     function resetForgotUI() {
-        document.getElementById('forgot-step-1').classList.remove('hidden');
-        document.getElementById('forgot-step-2').classList.add('hidden');
-        document.getElementById('forgot-phone').value = '';
-        document.getElementById('reset-pass-new').value = '';
-        document.getElementById('reset-pass-confirm').value = '';
+        document.getElementById('forgot-step-1').classList.remove('hidden'); document.getElementById('forgot-step-2').classList.add('hidden');
+        document.getElementById('forgot-phone').value = ''; document.getElementById('reset-pass-new').value = ''; document.getElementById('reset-pass-confirm').value = '';
         resetTargetPhone = null;
     }
-
     async function verifyForReset() {
-        let phone = document.getElementById('forgot-phone').value.trim();
-        let d = document.getElementById('forgot-day').value;
-        let m = document.getElementById('forgot-month').value;
-        let y = document.getElementById('forgot-year').value;
-
-        if (!d || !m || !y || phone === "") return alert("जानकारी पूरी डालें!");
-        let dob = `${d}-${m}-${y}`;
-
+        let phone = document.getElementById('forgot-phone').value.trim(); let d = document.getElementById('forgot-day').value; let m = document.getElementById('forgot-month').value; let y = document.getElementById('forgot-year').value;
+        if (!d || !m || !y || phone === "") return alert("जानकारी पूरी डालें!"); let dob = `${d}-${m}-${y}`;
         showLoader(true);
         try {
-            let snapshot = await db.ref('users/' + phone).once('value');
-            showLoader(false);
-            if (!snapshot.exists()) return alert("यह नंबर सिस्टम में नहीं है!");
-            
-            let data = snapshot.val();
-            if (data.dob === dob) {
-                resetTargetPhone = phone; 
-                document.getElementById('forgot-step-1').classList.add('hidden');
-                document.getElementById('forgot-step-2').classList.remove('hidden');
-            } else {
-                alert("गलत जन्मतिथि! कृपया सही जन्मतिथि डालें।");
-            }
-        } catch(e) {
-            showLoader(false);
-            alert("डेटाबेस एरर।");
-        }
+            let snap = await db.ref('users/' + phone).once('value'); showLoader(false);
+            if (!snap.exists()) return alert("यह नंबर सिस्टम में नहीं है!");
+            if (snap.val().dob === dob) { resetTargetPhone = phone; document.getElementById('forgot-step-1').classList.add('hidden'); document.getElementById('forgot-step-2').classList.remove('hidden'); } 
+            else alert("गलत जन्मतिथि!");
+        } catch(e) { showLoader(false); alert("डेटाबेस एरर।"); }
     }
-
     async function updatePassword() {
-        let newPass = document.getElementById('reset-pass-new').value.trim();
-        let confirmPass = document.getElementById('reset-pass-confirm').value.trim();
-
-        if (newPass.length < 4) return alert("पासवर्ड कम से कम 4 अक्षरों का होना चाहिए!");
-        if (newPass !== confirmPass) return alert("पासवर्ड मैच नहीं हो रहे हैं!");
-
+        let newPass = document.getElementById('reset-pass-new').value.trim(); let confirmPass = document.getElementById('reset-pass-confirm').value.trim();
+        if (newPass.length < 4) return alert("पासवर्ड कम से कम 4 अक्षरों का होना चाहिए!"); if (newPass !== confirmPass) return alert("पासवर्ड मैच नहीं हो रहे हैं!");
         showLoader(true);
         try {
-            await db.ref('users/' + resetTargetPhone + '/password').set(newPass);
-            showLoader(false);
-            alert("पासवर्ड सफलतापूर्वक बदल गया है! अब आप नए पासवर्ड से लॉगिन कर सकते हैं।");
-            
-            localStorage.removeItem('udhar_logged_in_pass');
-            
-            resetForgotUI();
-            showScreen('login-screen');
-            document.getElementById('login-phone').value = resetTargetPhone;
-        } catch (e) {
-            showLoader(false);
-            alert("पासवर्ड अपडेट करने में समस्या आई!");
-        }
+            await db.ref('users/' + resetTargetPhone + '/password').set(newPass); showLoader(false);
+            alert("पासवर्ड बदल गया!"); localStorage.removeItem('udhar_logged_in_pass'); resetForgotUI(); goToScreen('login-screen'); document.getElementById('login-phone').value = resetTargetPhone;
+        } catch (e) { showLoader(false); alert("एरर!"); }
     }
 
     function doLogout() {
         if(confirm("क्या आप वाकई लॉगआउट करना चाहते हैं?")) {
-            currentUserPhone = null;
-            userData = null;
-            localStorage.removeItem('udhar_logged_in_phone');
-            localStorage.removeItem('udhar_logged_in_pass');
-            
-            document.getElementById('login-pass').value = '';
-            document.getElementById('settings-screen').classList.add('hidden');
-            document.getElementById('detail-screen').classList.add('hidden');
-            document.getElementById('home-screen').classList.remove('hidden');
-            showScreen('login-screen');
+            currentUserPhone = null; userData = null; globalDefaulters = {};
+            localStorage.removeItem('udhar_logged_in_phone'); localStorage.removeItem('udhar_logged_in_pass');
+            document.getElementById('login-pass').value = ''; goToScreen('login-screen');
         }
     }
 
     async function saveData() {
         showLoader(true);
-        try {
-            await db.ref('users/' + currentUserPhone).set(userData);
-            showLoader(false);
-        } catch(e) {
-            showLoader(false);
-            alert("डेटा सेव करने में समस्या आई!");
-        }
+        try { await db.ref('users/' + currentUserPhone).set(userData); showLoader(false); } 
+        catch(e) { showLoader(false); alert("डेटा सेव करने में समस्या आई!"); }
     }
 
-    function openSettings() {
-        document.getElementById('home-screen').classList.add('hidden');
-        document.getElementById('settings-screen').classList.remove('hidden');
-        
-        document.getElementById('my-name').value = userData.name || "";
-        document.getElementById('my-email').value = userData.email || "";
-        document.getElementById('my-phone').value = currentUserPhone;
-        document.getElementById('my-upi-id').value = userData.upiId || "";
-        document.getElementById('my-reminder-date').value = userData.reminderDate || 1;
-        
-        document.getElementById('my-profile-pic').src = (userData.profilePic && userData.profilePic !== "") ? userData.profilePic : DEFAULT_PIC;
+    // Settings Profile
+    function previewImage(event) {
+        var reader = new FileReader(); reader.onload = function() { document.getElementById('my-profile-pic').src = reader.result; userData.profilePic = reader.result; }
+        if(event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
     }
-
-    function closeSettings() {
-        document.getElementById('settings-screen').classList.add('hidden');
-        document.getElementById('home-screen').classList.remove('hidden');
+    function updateHeaderProfilePic() {
+        let headPic = document.getElementById('header-profile-pic');
+        if(userData.profilePic && userData.profilePic !== "") { headPic.src = userData.profilePic; headPic.style.display = 'block'; } 
+        else headPic.style.display = 'none';
     }
-
     async function saveSettings() {
-        userData.name = document.getElementById('my-name').value.trim();
-        userData.email = document.getElementById('my-email').value.trim();
-        userData.upiId = document.getElementById('my-upi-id').value.trim();
-        
+        userData.name = document.getElementById('my-name').value.trim(); userData.email = document.getElementById('my-email').value.trim(); userData.upiId = document.getElementById('my-upi-id').value.trim();
         let rDate = parseInt(document.getElementById('my-reminder-date').value);
-        if(rDate >= 1 && rDate <= 31) userData.reminderDate = rDate;
-        else return alert("तारीख 1 से 31 के बीच होनी चाहिए!");
-        
-        await saveData();
-        updateHeaderProfilePic();
-        alert("प्रोफाइल सेव हो गई!");
-        closeSettings();
-        checkReminderAlert(); 
+        if(rDate >= 1 && rDate <= 31) userData.reminderDate = rDate; else return alert("तारीख 1 से 31 के बीच होनी चाहिए!");
+        await saveData(); updateHeaderProfilePic(); alert("प्रोफाइल सेव हो गई!"); window.history.back(); checkReminderAlert(); 
     }
 
     function checkReminderAlert() {
-        let today = new Date();
-        let reminderDiv = document.getElementById('reminder-banner');
-        
+        let today = new Date(); let reminderDiv = document.getElementById('reminder-banner');
         if (today.getDate() === parseInt(userData.reminderDate) && totalOutstanding > 0) {
-            reminderDiv.classList.remove('hidden');
-            document.getElementById('banner-amount').innerText = `₹${totalOutstanding}`;
-            
-            let lastReminded = localStorage.getItem(`lastAutoReminder_${currentUserPhone}`);
-            let dateString = today.toDateString();
-            if (lastReminded !== dateString) {
-                setTimeout(() => {
-                    if(confirm(`आज रिमाइंडर का दिन है!\nआपका कुल बकाया ₹${totalOutstanding} है।\n\nक्या आप अभी सबको WhatsApp पर ऑटो-रिमाइंडर भेजना चाहते हैं?`)) {
-                        sendAllReminders();
-                    }
-                    localStorage.setItem(`lastAutoReminder_${currentUserPhone}`, dateString);
-                }, 800);
-            }
-        } else {
-            reminderDiv.classList.add('hidden');
-        }
+            reminderDiv.classList.remove('hidden'); document.getElementById('banner-amount').innerText = `₹${totalOutstanding}`;
+        } else { reminderDiv.classList.add('hidden'); }
     }
 
     function renderHomeScreen() {
-        document.getElementById('home-screen').classList.remove('hidden');
-        document.getElementById('detail-screen').classList.add('hidden');
-        
-        const listDiv = document.getElementById('customer-list');
-        listDiv.innerHTML = '';
-        
+        const listDiv = document.getElementById('customer-list'); listDiv.innerHTML = '';
         let totalReceive = 0; let totalPay = 0;
         let custArray = Object.keys(userData.customers || {}).map(name => { return { name: name, ...userData.customers[name] }; });
         
@@ -649,90 +534,181 @@
             let amountText = cust.balance > 0 ? `₹${cust.balance}` : (cust.balance < 0 ? `₹${Math.abs(cust.balance)}` : `₹0`);
             let avatarBgColor = getAvatarColor(cust.name); 
             
+            // NEW: Show Defaulter Flag globally
+            let defaulterFlag = (cust.mobile && globalDefaulters[cust.mobile]) ? '<span style="font-size:14px;" title="डिफॉल्टर">🚩</span>' : '';
+            
             listDiv.innerHTML += `
                 <div class="list-item" onclick="openCustomerDetail('${cust.name}')">
                     <div style="display:flex; align-items:center;">
-                        <div class="item-avatar" style="background-color: ${avatarBgColor};">${cust.name.charAt(0).toUpperCase()}</div>
-                        <div class="item-name">${cust.name}</div>
+                        <div class="item-avatar" style="background-color: ${avatarBgColor};">
+                            ${cust.linkedPic ? `<img src="${cust.linkedPic}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">` : cust.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="item-name">${cust.name} ${defaulterFlag}</div>
                     </div>
                     <div class="item-amount ${amountClass}">${amountText}</div>
                 </div>
             `;
         });
-
         totalOutstanding = totalReceive;
-        document.getElementById('total-receive').innerText = `₹${totalReceive}`;
-        document.getElementById('total-pay').innerText = `₹${totalPay}`;
-        
+        document.getElementById('total-receive').innerText = `₹${totalReceive}`; document.getElementById('total-pay').innerText = `₹${totalPay}`;
         checkReminderAlert();
     }
 
-    // --- कॉन्टैक्ट लिस्ट से ग्राहक चुनना ---
-    async function addNewCustomerDialog() {
-        const supported = ('contacts' in navigator && 'ContactsManager' in window);
-        let name = "";
-        let mobile = "";
+    // ==========================================
+    // 🔴 AUTO-CHECK, ADD CUSTOMER & MODAL 
+    // ==========================================
+    let autoFetchedPic = "";
 
-        if (supported) {
-            if (confirm("क्या आप फोन की कॉन्टैक्ट लिस्ट से ग्राहक चुनना चाहते हैं?\n(Cancel दबाने पर खुद टाइप कर सकते हैं)")) {
-                try {
-                    const props = ['name', 'tel'];
-                    const opts = { multiple: false };
-                    const contacts = await navigator.contacts.select(props, opts);
-                    if (contacts.length > 0) {
-                        name = contacts[0].name[0];
-                        if (contacts[0].tel && contacts[0].tel.length > 0) {
-                            let cleanMobile = contacts[0].tel[0].replace(/\D/g, ''); 
-                            if(cleanMobile.length > 10) {
-                                cleanMobile = cleanMobile.slice(-10); 
-                            }
-                            mobile = cleanMobile;
-                        }
-                    } else {
-                        return;
-                    }
-                } catch (ex) {
-                    alert("कॉन्टैक्ट खोलने में समस्या आई, कृपया मैन्युअली टाइप करें।");
+    function showAddCustomerModal() {
+        document.getElementById('add-customer-modal').classList.remove('hidden');
+        document.getElementById('manual-cust-name').value = '';
+        document.getElementById('manual-cust-phone').value = '';
+        document.getElementById('auto-profile-pic').classList.add('hidden');
+        document.getElementById('modal-defaulter-warning').classList.add('hidden');
+        autoFetchedPic = "";
+    }
+
+    function closeAddCustomerModal() { document.getElementById('add-customer-modal').classList.add('hidden'); }
+
+    // NEW: Auto-Fetch Profile and Defaulter Status
+    async function autoCheckUser() {
+        let phone = document.getElementById('manual-cust-phone').value.trim();
+        let picImg = document.getElementById('auto-profile-pic');
+        let warnDiv = document.getElementById('modal-defaulter-warning');
+        
+        if(phone.length === 10) {
+            // 1. Fetch Defaulter Global List
+            let defSnap = await db.ref('defaulters/' + phone).once('value');
+            if(defSnap.exists() || globalDefaulters[phone]) {
+                warnDiv.innerText = "🚩 सावधान: यह नंबर लोगों द्वारा डिफॉल्टर घोषित है!";
+                warnDiv.classList.remove('hidden');
+            } else {
+                warnDiv.classList.add('hidden');
+            }
+            
+            // 2. Fetch User Profile
+            let snap = await db.ref('users/' + phone).once('value');
+            if(snap.exists()) {
+                let d = snap.val();
+                if(d.name) document.getElementById('manual-cust-name').value = d.name;
+                if(d.profilePic) {
+                    picImg.src = d.profilePic;
+                    picImg.classList.remove('hidden');
+                    autoFetchedPic = d.profilePic;
+                } else {
+                    picImg.src = DEFAULT_PIC;
+                    picImg.classList.remove('hidden');
+                    autoFetchedPic = "";
                 }
             }
-        }
-
-        if (!name) {
-            name = prompt("नए ग्राहक का नाम दर्ज करें:");
-            if (!name || name.trim() === "") return;
-            name = name.trim();
-        }
-
-        if (!userData.customers) userData.customers = {};
-        if (!userData.customers[name]) {
-            if (!mobile) {
-                mobile = prompt(`ग्राहक '${name}' का मोबाइल नंबर (WhatsApp/SMS के लिए):`);
-            }
-            userData.customers[name] = { mobile: mobile || "", balance: 0, transactions: [] };
-            await saveData();
-            openCustomerDetail(name);
         } else {
-            alert("यह नाम पहले से मौजूद है!");
-            openCustomerDetail(name);
+            picImg.classList.add('hidden');
+            warnDiv.classList.add('hidden');
+            autoFetchedPic = "";
         }
     }
 
+    async function pickFromContacts() {
+        if ('contacts' in navigator && 'ContactsManager' in window) {
+            try {
+                const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+                if (contacts.length > 0) {
+                    let name = contacts[0].name ? contacts[0].name[0] : "";
+                    let mobile = "";
+                    if (contacts[0].tel && contacts[0].tel.length > 0) {
+                        let cleanMobile = contacts[0].tel[0].replace(/\D/g, ''); 
+                        if(cleanMobile.length > 10) cleanMobile = cleanMobile.slice(-10); 
+                        mobile = cleanMobile;
+                    }
+                    
+                    // Fill input and trigger check manually
+                    document.getElementById('manual-cust-name').value = name;
+                    document.getElementById('manual-cust-phone').value = mobile;
+                    autoCheckUser(); 
+                }
+            } catch (ex) { alert("कॉन्टैक्ट खोलने की अनुमति नहीं मिली। नीचे खुद टाइप करें।"); }
+        } else { alert("ब्राउज़र सीधे कॉन्टैक्ट चुनने को सपोर्ट नहीं करता। नीचे टाइप करें।"); }
+    }
+
+    function addManualCustomer() {
+        let name = document.getElementById('manual-cust-name').value.trim();
+        let mobile = document.getElementById('manual-cust-phone').value.trim();
+        if(!name) return alert("कृपया ग्राहक का नाम दर्ज करें!");
+        saveNewCustomer(name, mobile);
+        closeAddCustomerModal();
+    }
+
+    async function saveNewCustomer(name, mobile) {
+        if (!userData.customers) userData.customers = {};
+        if (!userData.customers[name]) {
+            userData.customers[name] = { mobile: mobile || "", balance: 0, transactions: [], linkedPic: autoFetchedPic };
+            await saveData(); openCustomerDetail(name);
+        } else { alert("यह नाम पहले से मौजूद है!"); openCustomerDetail(name); }
+    }
+
+    // ==========================================
+    // 🔴 CUSTOMER DETAILS, EDIT & MARK DEFAULTER 
+    // ==========================================
     function openCustomerDetail(name) {
         currentCustomer = name;
-        document.getElementById('home-screen').classList.add('hidden');
-        document.getElementById('detail-screen').classList.remove('hidden');
-        document.getElementById('detail-title').innerText = name;
+        goToScreen('detail-screen');
+        
+        // Show Name & Defaulter Flag in Header
+        let custData = userData.customers[currentCustomer];
+        let defFlag = (custData.mobile && globalDefaulters[custData.mobile]) ? "🚩" : "";
+        document.getElementById('detail-title').innerText = `${name} ${defFlag}`;
+        document.getElementById('detail-phone').innerText = custData.mobile ? `📞 ${custData.mobile}` : "मोबाइल नंबर नहीं है";
+        
         renderTransactions();
     }
 
-    function showHomeScreen() {
-        currentCustomer = null;
-        renderHomeScreen();
+    // NEW: Edit Customer Name & Number
+    async function editCustomerDetails() {
+        let custData = userData.customers[currentCustomer];
+        
+        let newName = prompt("कस्टमर का नाम बदलें:", currentCustomer);
+        if(!newName || newName.trim() === "") return;
+        newName = newName.trim();
+        
+        let newMobile = prompt("कस्टमर का मोबाइल नंबर बदलें:", custData.mobile || "");
+        if(newMobile === null) return; // cancelled
+        newMobile = newMobile.trim();
+        
+        if(newName !== currentCustomer) {
+            if(userData.customers[newName]) return alert("यह नया नाम पहले से किसी और ग्राहक का है!");
+            userData.customers[newName] = custData;
+            delete userData.customers[currentCustomer];
+            currentCustomer = newName;
+        }
+        
+        userData.customers[currentCustomer].mobile = newMobile;
+        await saveData();
+        alert("जानकारी सफलतापूर्वक बदल दी गई है!");
+        openCustomerDetail(currentCustomer); // refresh
+    }
+
+    // NEW: Mark Defaulter Globally
+    async function markAsDefaulter() {
+        let custData = userData.customers[currentCustomer];
+        if(!custData.mobile || custData.mobile.length < 10) return alert("डिफॉल्टर घोषित करने के लिए इस ग्राहक का 10 अंकों का मोबाइल नंबर सेव होना ज़रूरी है!");
+        
+        if(confirm(`क्या आप वाकई '${currentCustomer}' को फ्रॉड/डिफॉल्टर घोषित करना चाहते हैं?\n(यह जानकारी ऐप इस्तेमाल करने वाले सभी लोगों को दिखेगी!)`)) {
+            showLoader(true);
+            try {
+                await db.ref('defaulters/' + custData.mobile).set({
+                    markedBy: currentUserPhone,
+                    date: new Date().toISOString()
+                });
+                globalDefaulters[custData.mobile] = true; // update local instantly
+                showLoader(false);
+                alert("इस नंबर को ग्लोबल डिफॉल्टर लिस्ट में डाल दिया गया है!");
+                openCustomerDetail(currentCustomer); // refresh UI to show flag
+            } catch(e) { showLoader(false); alert("सर्वर एरर!"); }
+        }
     }
 
     function renderTransactions() {
-        const txnList = document.getElementById('transaction-list');
-        txnList.innerHTML = '';
+        const txnList = document.getElementById('transaction-list'); txnList.innerHTML = '';
         let custData = userData.customers[currentCustomer];
         if(!custData.transactions) custData.transactions = [];
         
@@ -742,11 +718,7 @@
         else balDiv.innerHTML = `<span style="color:#333">₹0 (हिसाब बराबर)</span>`;
 
         let deleteBtn = document.getElementById('delete-customer-btn');
-        if(custData.balance === 0) {
-            deleteBtn.style.display = 'inline-block';
-        } else {
-            deleteBtn.style.display = 'none';
-        }
+        if(custData.balance === 0) deleteBtn.style.display = 'inline-block'; else deleteBtn.style.display = 'none';
 
         custData.transactions.forEach(txn => {
             let isGiven = txn.type === 'give';
@@ -763,76 +735,48 @@
 
     async function promptTransaction(type) {
         let amountStr = prompt(`कितनी रकम ${type === 'give' ? 'दी' : 'मिली'}? (₹ में)`);
-        if (!amountStr) return;
-        let amount = parseFloat(amountStr);
-        if (isNaN(amount) || amount <= 0) return;
-
-        let securityPin = prompt("सुरक्षा के लिए अपना लॉगिन पासवर्ड (PIN) दर्ज करें:");
-        if (securityPin !== userData.password) {
-            alert("पासवर्ड गलत है! लेन-देन रद्द कर दिया गया।");
-            return; 
-        }
-
-        let dateObj = new Date();
-        let dateStr = dateObj.getDate() + '/' + (dateObj.getMonth()+1) + '/' + dateObj.getFullYear() + ' ' + dateObj.getHours() + ':' + dateObj.getMinutes();
+        if (!amountStr) return; let amount = parseFloat(amountStr); if (isNaN(amount) || amount <= 0) return;
         
-        if (type === 'give') userData.customers[currentCustomer].balance += amount; 
-        else userData.customers[currentCustomer].balance -= amount;
+        let securityPin = prompt("सुरक्षा के लिए अपना लॉगिन पासवर्ड दर्ज करें:");
+        if (securityPin !== userData.password) return alert("पासवर्ड गलत है! लेन-देन रद्द कर दिया गया।"); 
+
+        let dateObj = new Date(); let dateStr = dateObj.getDate() + '/' + (dateObj.getMonth()+1) + '/' + dateObj.getFullYear() + ' ' + dateObj.getHours() + ':' + dateObj.getMinutes();
+        if (type === 'give') userData.customers[currentCustomer].balance += amount; else userData.customers[currentCustomer].balance -= amount;
 
         if(!userData.customers[currentCustomer].transactions) userData.customers[currentCustomer].transactions = [];
         userData.customers[currentCustomer].transactions.push({ type: type, amount: amount, date: dateStr });
-        
-        await saveData();
-        renderTransactions();
+        await saveData(); renderTransactions();
     }
 
     async function deleteCustomer() {
         let custData = userData.customers[currentCustomer];
-        if (custData.balance !== 0) {
-            alert("इस कस्टमर का बैलेंस अभी ₹0 नहीं है। कृपया पहले हिसाब बराबर करें।");
-            return;
-        }
-
+        if (custData.balance !== 0) return alert("बैलेंस अभी ₹0 नहीं है। कृपया पहले हिसाब बराबर करें।");
         if(confirm(`क्या आप वाकई '${currentCustomer}' को हमेशा के लिए डिलीट करना चाहते हैं?`)) {
-            delete userData.customers[currentCustomer];
-            await saveData();
-            alert("कस्टमर सफलतापूर्वक डिलीट हो गया!");
-            showHomeScreen();
+            delete userData.customers[currentCustomer]; await saveData(); alert("कस्टमर डिलीट हो गया!"); window.history.back();
         }
     }
 
     function sendReminder(type) {
         let cust = userData.customers[currentCustomer];
         if(!cust.mobile) return alert("इस कस्टमर का मोबाइल नंबर सेव नहीं है।");
-        
         let msg = "";
         if(cust.balance > 0) {
-            msg = `*रिमाइंडर / Payment Reminder*\n\nनमस्ते ${currentCustomer},\nआपके खाते का बकाया (Due Amount) ₹${cust.balance} है। कृपया अपना भुगतान जल्द से जल्द करें।\n`;
-            if(userData.upiId && userData.upiId.trim() !== "") {
-                msg += `\n*ऑनलाइन पेमेंट करने के लिए नीचे दिए गए लिंक पर क्लिक करें:*\nupi://pay?pa=${userData.upiId}&pn=${encodeURIComponent(userData.name || 'Store')}&am=${cust.balance}&cu=INR`;
-            }
-        } else if (cust.balance < 0) {
-            msg = `नमस्ते ${currentCustomer},\nमुझे आपको ₹${Math.abs(cust.balance)} देने हैं।`;
-        } else {
-            msg = `नमस्ते ${currentCustomer},\nहमारा खाता एकदम क्लियर है (₹0)।`;
-        }
+            msg = `*रिमाइंडर / Payment Reminder*\n\nनमस्ते ${currentCustomer},\nआपके खाते का बकाया ₹${cust.balance} है। कृपया भुगतान करें।\n`;
+            if(userData.upiId && userData.upiId.trim() !== "") msg += `\n*पेमेंट लिंक:*\nupi://pay?pa=${userData.upiId}&pn=${encodeURIComponent(userData.name || 'Store')}&am=${cust.balance}&cu=INR`;
+        } 
+        else if (cust.balance < 0) msg = `नमस्ते ${currentCustomer},\nमुझे आपको ₹${Math.abs(cust.balance)} देने हैं।`;
+        else msg = `नमस्ते ${currentCustomer},\nहमारा खाता क्लियर है (₹0)।`;
 
-        if (type === 'whatsapp') {
-            window.open(`https://api.whatsapp.com/send?phone=91${cust.mobile}&text=${encodeURIComponent(msg)}`, '_blank');
-        } else if (type === 'sms') {
-            let smsMsg = msg.replace(/\*/g, '');
-            window.open(`sms:91${cust.mobile}?body=${encodeURIComponent(smsMsg)}`, '_self');
-        }
+        if (type === 'whatsapp') window.open(`https://api.whatsapp.com/send?phone=91${cust.mobile}&text=${encodeURIComponent(msg)}`, '_blank');
+        else if (type === 'sms') window.open(`sms:91${cust.mobile}?body=${encodeURIComponent(msg.replace(/\*/g, ''))}`, '_self');
     }
 
     function sendAllReminders() {
         for (let name in userData.customers) {
             let cust = userData.customers[name];
             if (cust.balance > 0 && cust.mobile) {
-                let msg = `*रिमाइंडर / Payment Reminder*\n\nनमस्ते ${name},\nआपके खाते का बकाया (Due Amount) ₹${cust.balance} है। कृपया अपना भुगतान जल्द से जल्द करें।`;
-                if(userData.upiId && userData.upiId.trim() !== "") {
-                    msg += `\n\n*ऑनलाइन पेमेंट करने के लिए नीचे दिए गए लिंक पर क्लिक करें:*\nupi://pay?pa=${userData.upiId}&pn=${encodeURIComponent(userData.name || 'Store')}&am=${cust.balance}&cu=INR`;
-                }
+                let msg = `*रिमाइंडर*\nनमस्ते ${name},\nआपका बकाया ₹${cust.balance} है। कृपया भुगतान करें।`;
+                if(userData.upiId) msg += `\n\n*पेमेंट लिंक:*\nupi://pay?pa=${userData.upiId}&pn=${encodeURIComponent(userData.name || 'Store')}&am=${cust.balance}&cu=INR`;
                 window.open(`https://api.whatsapp.com/send?phone=91${cust.mobile}&text=${encodeURIComponent(msg)}`, '_blank');
             }
         }
