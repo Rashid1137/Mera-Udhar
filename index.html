@@ -48,8 +48,10 @@
         .summary-box { display: flex; justify-content: space-between; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
         .summary-item { text-align: center; flex: 1; }
         .summary-item:first-child { border-right: 1px solid #eee; }
-        .text-green { color: #128C7E; font-weight: bold; font-size: 20px; margin-top: 5px; }
+        
+        /* COLORS */
         .text-red { color: #d32f2f; font-weight: bold; font-size: 20px; margin-top: 5px; }
+        .text-green { color: #128C7E; font-weight: bold; font-size: 20px; margin-top: 5px; }
         
         /* लिस्ट कंटेनर और आइटम्स */
         .list-container { flex: 1; overflow-y: auto; background: #f5f5f5; padding-bottom: 90px; }
@@ -89,6 +91,7 @@
         .settings-screen { padding: 20px; background: #f5f5f5; flex: 1; overflow-y: auto;}
         .settings-card { background: white; padding: 18px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
         .settings-card input, .settings-card select { width: 100%; padding: 14px; margin-top: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; background: #fafafa;}
+        .settings-card input:focus { border-color: #128C7E; background: white; box-shadow: 0 0 5px rgba(18,140,126,0.2);}
         
         /* प्रोफाइल फोटो स्टाइल */
         .profile-pic-wrapper { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
@@ -221,7 +224,7 @@
             </div>
             <div class="header-icons">
                 <span onclick="goToScreen('settings-screen')" title="सेटिंग्स">⚙️</span>
-                <span onclick="doLogout()" title="लॉगआउट">
+                <span onclick="doLogoutBtn()" title="लॉगआउट">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
                         <line x1="12" y1="2" x2="12" y2="12"></line>
@@ -237,12 +240,12 @@
         <div class="dashboard">
             <div class="summary-box">
                 <div class="summary-item">
-                    <div style="color: #666; font-size: 14px;">मुझे मिलेंगे</div>
-                    <div id="total-receive" class="text-green">₹0</div>
+                    <div style="color: #666; font-size: 14px;">मुझे मिलेंगे (मेरा उधार)</div>
+                    <div id="total-receive" class="text-red">₹0</div>
                 </div>
                 <div class="summary-item">
                     <div style="color: #666; font-size: 14px;">मुझे देने हैं</div>
-                    <div id="total-pay" class="text-red">₹0</div>
+                    <div id="total-pay" class="text-green">₹0</div>
                 </div>
             </div>
         </div>
@@ -254,7 +257,7 @@
     <div id="settings-screen" style="height: 100%; display: flex; flex-direction: column;" class="hidden">
         <div class="header">
             <button class="back-btn" onclick="window.history.back()">← पीछे</button>
-            <div>मेरी सेटिंग्स</div>
+            <div>मेरी प्रोफाइल और सेटिंग्स</div>
             <div style="width: 50px;"></div>
         </div>
         <div class="settings-screen">
@@ -266,13 +269,20 @@
                         <input type="file" id="image-upload" accept="image/*" onchange="previewImage(event)">
                     </div>
                 </div>
-                <label style="font-weight: bold; color: #333;">नाम</label>
-                <input type="text" id="my-name" placeholder="अपना नाम">
-                <label style="font-weight: bold; color: #333; margin-top:10px; display:block;">ईमेल</label>
-                <input type="email" id="my-email" placeholder="अपनी ईमेल आईडी">
-                <label style="font-weight: bold; color: #333; margin-top:10px; display:block;">मोबाइल</label>
-                <input type="text" id="my-phone" readonly style="background-color: #e9ecef; color: #555;">
+                
+                <label style="font-weight: bold; color: #333;">मेरा नाम</label>
+                <input type="text" id="my-name" placeholder="अपना नाम दर्ज करें">
+                
+                <label style="font-weight: bold; color: #333; margin-top:10px; display:block;">मेरी ईमेल आईडी</label>
+                <input type="email" id="my-email" placeholder="अपनी ईमेल आईडी दर्ज करें">
+                
+                <label style="font-weight: bold; color: #333; margin-top:10px; display:block;">मेरा मोबाइल नंबर</label>
+                <input type="number" id="my-phone" placeholder="अपना रजिस्टर नंबर">
+                <div style="font-size: 12px; color: #d32f2f; margin-bottom: 15px; margin-top: -10px;">नंबर बदलने के लिए आपको अपना पासवर्ड डालना होगा।</div>
             </div>
+            
+            <button class="btn-main" onclick="openDefaulterCenter()" style="background: #d32f2f; margin-bottom: 15px;">🚩 डिफॉल्टर सेंटर</button>
+
             <div class="settings-card">
                 <label style="font-weight: bold; color: #333;">ऑनलाइन पेमेंट (UPI ID)</label>
                 <input type="text" id="my-upi-id" placeholder="जैसे: 9876543210@ybl">
@@ -281,7 +291,7 @@
                 <label style="font-weight: bold; color: #333;">मंथली रिमाइंडर की तारीख</label>
                 <input type="number" id="my-reminder-date" min="1" max="31" placeholder="तारीख (1 से 31)">
             </div>
-            <button class="btn-main" onclick="saveSettings()">सेव करें</button>
+            <button class="btn-main" onclick="saveSettings()">अपडेट और सेव करें</button>
         </div>
     </div>
 
@@ -292,7 +302,8 @@
             
             <div style="display:flex; gap:12px; font-size: 19px; align-items:center;">
                 <span style="cursor:pointer;" title="कस्टमर एडिट करें" onclick="editCustomerDetails()">✏️</span>
-                <span style="cursor:pointer;" title="डिफॉल्टर घोषित करें" onclick="markAsDefaulter()">🚩</span>
+                <span id="mark-defaulter-btn" style="cursor:pointer;" title="डिफॉल्टर घोषित करें" onclick="markAsDefaulter()">🚩</span>
+                <span id="unmark-defaulter-btn" style="cursor:pointer; display:none; color:#25D366" title="डिफॉल्टर से हटाएं" onclick="unmarkDefaulter()">✅</span>
                 <span id="delete-customer-btn" style="cursor:pointer; display:none;" title="डिलीट करें" onclick="deleteCustomer()">🗑️</span>
                 <span style="cursor:pointer;" title="नॉर्मल Text Message" onclick="sendReminder('sms')">✉️</span>
                 <span style="cursor:pointer;" title="WhatsApp मैसेज" onclick="sendReminder('whatsapp')">💬</span>
@@ -308,10 +319,32 @@
         <div class="transaction-list" id="transaction-list"></div>
 
         <div class="bottom-actions">
-            <button class="btn-action btn-give" onclick="promptTransaction('give')">मैंने दिए (-)</button>
+            <button class="btn-action btn-give" onclick="promptTransaction('give')">मैंने दिए (उधार)</button>
             <button class="btn-action btn-receive" onclick="promptTransaction('receive')">मैंने लिए (+)</button>
         </div>
     </div>
+    
+    <div id="defaulter-center-screen" class="hidden app-container" style="display: flex; flex-direction: column;">
+        <div class="header">
+            <button class="back-btn" onclick="window.history.back()">← पीछे</button>
+            <div>डिफॉल्टर सेंटर</div>
+            <div style="width: 50px;"></div>
+        </div>
+        <div class="container" style="padding: 20px; overflow-y: auto; flex:1">
+            <h3 style="color:#d32f2f; text-align:center">क्या आप डिफॉल्टर घोषित हैं?</h3>
+            <div id="my-defaulter-status" class="hidden settings-card" style="border: 2px solid #d32f2f">
+                <div style="text-align:center; font-size:50px">🚩</div>
+                <p id="defaulter-marked-by-text" style="color: #333; font-weight: bold; text-align:center"></p>
+                <p style="color: #777; font-size: 12px; text-align:center">आप इस ऐप पर डिफॉल्टर लिस्ट में हैं।</p>
+            </div>
+            <div id="not-defaulter-status" class="settings-card" style="text-align:center; border: 2px solid #25D366">
+                <div style="text-align:center; font-size:50px; color:#25D366">✅</div>
+                <p style="color: #25D366; font-weight: bold;">आप डिफॉल्टर लिस्ट में नहीं हैं।</p>
+                <p style="color: #777; font-size: 12px;">आपका रिकॉर्ड एकदम साफ है।</p>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -337,27 +370,36 @@
     let currentCustomer = null;
     let totalOutstanding = 0;
     let resetTargetPhone = null; 
-    let globalDefaulters = {}; // NEW: Store all defaulters
+    let globalDefaulters = {}; 
+    let inactivityTimer; 
+    const AUTO_LOGOUT_TIME = 60 * 1000; // 1 Minute in milliseconds
     
     const DEFAULT_PIC = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23ccc'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
     // ==========================================
-    // 🔴 ROUTER (BACK BUTTON HANDLING) 
+    // 🔴 ROUTER (BACK BUTTON HANDLING & REFRESH)
     // ==========================================
     let activeScreenId = 'login-screen';
 
     function renderScreenDOM(screenId) {
         ['login-screen', 'register-screen', 'forgot-screen', 'main-app'].forEach(id => document.getElementById(id).classList.add('hidden'));
         
-        if (['home-screen', 'settings-screen', 'detail-screen'].includes(screenId)) {
+        if (['home-screen', 'settings-screen', 'detail-screen', 'defaulter-center-screen'].includes(screenId)) {
             document.getElementById('main-app').classList.remove('hidden');
             document.getElementById('home-screen').classList.toggle('hidden', screenId !== 'home-screen');
             document.getElementById('settings-screen').classList.toggle('hidden', screenId !== 'settings-screen');
             document.getElementById('detail-screen').classList.toggle('hidden', screenId !== 'detail-screen');
+            document.getElementById('defaulter-center-screen').classList.toggle('hidden', screenId !== 'defaulter-center-screen');
+            
+            // FIX: Refresh the customer list every time we come back to the home screen
+            if (screenId === 'home-screen' && currentUserPhone && userData) {
+                renderHomeScreen();
+            }
         } else {
             document.getElementById(screenId).classList.remove('hidden');
         }
         activeScreenId = screenId;
+        resetInactivityTimer(); 
     }
 
     function goToScreen(screenId) {
@@ -367,10 +409,9 @@
 
     window.onpopstate = function(event) {
         if (event.state && event.state.screen) {
-            // BACK BUTTON CONFIRMATION ON HOME SCREEN
             if (activeScreenId === 'home-screen') {
                 if (confirm("क्या आप ऐप से बाहर निकलना चाहते हैं? (Yes / No)")) {
-                    window.close(); // Close browser window/PWA
+                    window.close(); 
                 } else {
                     history.pushState({ screen: 'home-screen' }, "", "#home-screen");
                 }
@@ -447,16 +488,60 @@
             if(!userData.customers) userData.customers = {};
             localStorage.setItem('udhar_logged_in_phone', phone); localStorage.setItem('udhar_logged_in_pass', pass);
             
-            // NEW: Fetch all Defaulters on Login
             let defSnap = await db.ref('defaulters').once('value');
             if(defSnap.exists()) globalDefaulters = defSnap.val();
 
             showLoader(false); goToScreen('home-screen');
-            updateHeaderProfilePic(); renderHomeScreen();
-        } catch(e) { showLoader(false); alert("डेटाबेस एरर।"); }
+            updateHeaderProfilePic(); 
+            setupActivityDetectors(); 
+        } catch(e) { showLoader(false); alert("डेटाबेस एरर। Firebase Config चेक करें।"); }
     }
 
-    // (Password Reset UI omitted for brevity, left intact)
+    // ==========================================
+    // 🔴 STRICT AUTO LOGOUT ON INACTIVITY (1 MIN)
+    // ==========================================
+    function setupActivityDetectors() {
+        if(currentUserPhone) {
+            ['mousemove', 'mousedown', 'keypress', 'touchstart', 'scroll', 'click'].forEach(event => {
+                document.addEventListener(event, resetInactivityTimer, {passive: true});
+            });
+            // Also logout if app goes to background for more than 1 min
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') resetInactivityTimer();
+            });
+            resetInactivityTimer(); 
+        }
+    }
+
+    function resetInactivityTimer() {
+        if(currentUserPhone && activeScreenId !== 'login-screen') {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(autoLogout, AUTO_LOGOUT_TIME); 
+        }
+    }
+
+    function autoLogout() {
+        ['mousemove', 'mousedown', 'keypress', 'touchstart', 'scroll', 'click'].forEach(event => {
+            document.removeEventListener(event, resetInactivityTimer);
+        });
+        clearTimeout(inactivityTimer);
+        
+        currentUserPhone = null; userData = null; globalDefaulters = {};
+        localStorage.removeItem('udhar_logged_in_phone'); localStorage.removeItem('udhar_logged_in_pass');
+        document.getElementById('login-pass').value = ''; 
+        document.getElementById('login-phone').value = ''; 
+        
+        goToScreen('login-screen');
+        alert("सुरक्षा कारणों से 1 मिनट से कोई काम न होने पर आपको लॉगआउट कर दिया गया है।");
+    }
+
+    function doLogoutBtn() {
+        if(confirm("क्या आप वाकई लॉगआउट करना चाहते हैं?")) {
+            autoLogout();
+        }
+    }
+
+    // Password Reset
     function resetForgotUI() {
         document.getElementById('forgot-step-1').classList.remove('hidden'); document.getElementById('forgot-step-2').classList.add('hidden');
         document.getElementById('forgot-phone').value = ''; document.getElementById('reset-pass-new').value = ''; document.getElementById('reset-pass-confirm').value = '';
@@ -483,14 +568,6 @@
         } catch (e) { showLoader(false); alert("एरर!"); }
     }
 
-    function doLogout() {
-        if(confirm("क्या आप वाकई लॉगआउट करना चाहते हैं?")) {
-            currentUserPhone = null; userData = null; globalDefaulters = {};
-            localStorage.removeItem('udhar_logged_in_phone'); localStorage.removeItem('udhar_logged_in_pass');
-            document.getElementById('login-pass').value = ''; goToScreen('login-screen');
-        }
-    }
-
     async function saveData() {
         showLoader(true);
         try { await db.ref('users/' + currentUserPhone).set(userData); showLoader(false); } 
@@ -506,12 +583,64 @@
         let headPic = document.getElementById('header-profile-pic');
         if(userData.profilePic && userData.profilePic !== "") { headPic.src = userData.profilePic; headPic.style.display = 'block'; } 
         else headPic.style.display = 'none';
+        
+        // Populate inputs
+        document.getElementById('my-name').value = userData.name || "";
+        document.getElementById('my-email').value = userData.email || "";
+        document.getElementById('my-phone').value = currentUserPhone || "";
+        document.getElementById('my-upi-id').value = userData.upiId || "";
+        document.getElementById('my-reminder-date').value = userData.reminderDate || 1;
+        document.getElementById('my-profile-pic').src = (userData.profilePic && userData.profilePic !== "") ? userData.profilePic : DEFAULT_PIC;
     }
+    
     async function saveSettings() {
-        userData.name = document.getElementById('my-name').value.trim(); userData.email = document.getElementById('my-email').value.trim(); userData.upiId = document.getElementById('my-upi-id').value.trim();
+        let newName = document.getElementById('my-name').value.trim(); 
+        let newEmail = document.getElementById('my-email').value.trim(); 
+        let newUpi = document.getElementById('my-upi-id').value.trim();
+        let newPhone = document.getElementById('my-phone').value.trim();
         let rDate = parseInt(document.getElementById('my-reminder-date').value);
-        if(rDate >= 1 && rDate <= 31) userData.reminderDate = rDate; else return alert("तारीख 1 से 31 के बीच होनी चाहिए!");
-        await saveData(); updateHeaderProfilePic(); alert("प्रोफाइल सेव हो गई!"); window.history.back(); checkReminderAlert(); 
+        
+        if(rDate < 1 || rDate > 31) return alert("तारीख 1 से 31 के बीच होनी चाहिए!");
+        
+        if (newPhone !== currentUserPhone) {
+            if (newPhone.length < 10) return alert("नया मोबाइल नंबर सही नहीं है! (कम से कम 10 अंक)");
+            let securityPin = prompt("सुरक्षा के लिए अपना वर्तमान लॉगिन पासवर्ड दर्ज करें:");
+            if (securityPin !== userData.password) {
+                document.getElementById('my-phone').value = currentUserPhone; 
+                return alert("पासवर्ड गलत है! आपका मोबाइल नंबर अपडेट नहीं किया गया।");
+            }
+            
+            showLoader(true);
+            try {
+                let snap = await db.ref('users/' + newPhone).once('value');
+                if (snap.exists()) {
+                    showLoader(false);
+                    document.getElementById('my-phone').value = currentUserPhone; 
+                    return alert("यह मोबाइल नंबर पहले से किसी अन्य अकाउंट पर रजिस्टर्ड है!");
+                }
+                
+                let oldPhone = currentUserPhone;
+                currentUserPhone = newPhone; 
+                localStorage.setItem('udhar_logged_in_phone', newPhone);
+                
+                userData.name = newName; userData.email = newEmail; userData.upiId = newUpi; userData.reminderDate = rDate;
+                await db.ref('users/' + newPhone).set(userData);
+                await db.ref('users/' + oldPhone).remove();
+                
+                let defSnap = await db.ref('defaulters/' + oldPhone).once('value');
+                if(defSnap.exists()) {
+                    await db.ref('defaulters/' + newPhone).set(defSnap.val());
+                    await db.ref('defaulters/' + oldPhone).remove();
+                }
+                
+                showLoader(false); alert("मोबाइल नंबर और प्रोफाइल सफलतापूर्वक अपडेट हो गई!");
+            } catch(e) { showLoader(false); return alert("सर्वर एरर, कृपया बाद में प्रयास करें।"); }
+        } else {
+            userData.name = newName; userData.email = newEmail; userData.upiId = newUpi; userData.reminderDate = rDate;
+            await saveData(); alert("प्रोफाइल सेव हो गई!"); 
+        }
+        
+        updateHeaderProfilePic(); window.history.back(); checkReminderAlert(); 
     }
 
     function checkReminderAlert() {
@@ -522,19 +651,29 @@
     }
 
     function renderHomeScreen() {
-        const listDiv = document.getElementById('customer-list'); listDiv.innerHTML = '';
-        let totalReceive = 0; let totalPay = 0;
-        let custArray = Object.keys(userData.customers || {}).map(name => { return { name: name, ...userData.customers[name] }; });
+        const listDiv = document.getElementById('customer-list'); 
+        listDiv.innerHTML = '';
         
+        if(!userData || !userData.customers) {
+            document.getElementById('total-receive').innerText = `₹0`; 
+            document.getElementById('total-pay').innerText = `₹0`;
+            return;
+        }
+
+        let totalReceive = 0; let totalPay = 0;
+        let custArray = Object.keys(userData.customers).map(name => { return { name: name, ...userData.customers[name] }; });
+        
+        if(custArray.length === 0) {
+            listDiv.innerHTML = '<p style="text-align:center; color:#888; padding: 20px;">अभी तक कोई ग्राहक नहीं है। नीचे ➕ बटन दबाकर जोड़ें।</p>';
+        }
+
         custArray.forEach(cust => {
             if (cust.balance > 0) totalReceive += cust.balance;
             if (cust.balance < 0) totalPay += Math.abs(cust.balance);
 
-            let amountClass = cust.balance > 0 ? 'text-green' : (cust.balance < 0 ? 'text-red' : '');
+            let amountClass = cust.balance > 0 ? 'text-red' : (cust.balance < 0 ? 'text-green' : '');
             let amountText = cust.balance > 0 ? `₹${cust.balance}` : (cust.balance < 0 ? `₹${Math.abs(cust.balance)}` : `₹0`);
             let avatarBgColor = getAvatarColor(cust.name); 
-            
-            // NEW: Show Defaulter Flag globally
             let defaulterFlag = (cust.mobile && globalDefaulters[cust.mobile]) ? '<span style="font-size:14px;" title="डिफॉल्टर">🚩</span>' : '';
             
             listDiv.innerHTML += `
@@ -555,7 +694,7 @@
     }
 
     // ==========================================
-    // 🔴 AUTO-CHECK, ADD CUSTOMER & MODAL 
+    // 🔴 ADD CUSTOMER
     // ==========================================
     let autoFetchedPic = "";
 
@@ -570,42 +709,37 @@
 
     function closeAddCustomerModal() { document.getElementById('add-customer-modal').classList.add('hidden'); }
 
-    // NEW: Auto-Fetch Profile and Defaulter Status
     async function autoCheckUser() {
         let phone = document.getElementById('manual-cust-phone').value.trim();
         let picImg = document.getElementById('auto-profile-pic');
         let warnDiv = document.getElementById('modal-defaulter-warning');
         
         if(phone.length === 10) {
-            // 1. Fetch Defaulter Global List
-            let defSnap = await db.ref('defaulters/' + phone).once('value');
-            if(defSnap.exists() || globalDefaulters[phone]) {
-                warnDiv.innerText = "🚩 सावधान: यह नंबर लोगों द्वारा डिफॉल्टर घोषित है!";
-                warnDiv.classList.remove('hidden');
-            } else {
-                warnDiv.classList.add('hidden');
+            if(phone === currentUserPhone) {
+                alert("आप खुद को ग्राहक के रूप में नहीं जोड़ सकते!");
+                document.getElementById('manual-cust-phone').value = '';
+                return;
             }
             
-            // 2. Fetch User Profile
-            let snap = await db.ref('users/' + phone).once('value');
-            if(snap.exists()) {
-                let d = snap.val();
-                if(d.name) document.getElementById('manual-cust-name').value = d.name;
-                if(d.profilePic) {
-                    picImg.src = d.profilePic;
-                    picImg.classList.remove('hidden');
-                    autoFetchedPic = d.profilePic;
-                } else {
-                    picImg.src = DEFAULT_PIC;
-                    picImg.classList.remove('hidden');
-                    autoFetchedPic = "";
-                }
-            }
-        } else {
-            picImg.classList.add('hidden');
-            warnDiv.classList.add('hidden');
-            autoFetchedPic = "";
-        }
+            showLoader(true);
+            try {
+                let defSnap = await db.ref('defaulters/' + phone).once('value');
+                if(defSnap.exists() || globalDefaulters[phone]) {
+                    warnDiv.innerText = "🚩 सावधान: यह नंबर लोगों द्वारा डिफॉल्टर घोषित है!";
+                    warnDiv.classList.remove('hidden');
+                } else { warnDiv.classList.add('hidden'); }
+                
+                let snap = await db.ref('users/' + phone).once('value');
+                if(snap.exists()) {
+                    let d = snap.val();
+                    if(d.name) document.getElementById('manual-cust-name').value = d.name;
+                    if(d.profilePic) { picImg.src = d.profilePic; picImg.classList.remove('hidden'); autoFetchedPic = d.profilePic; } 
+                    else { picImg.src = DEFAULT_PIC; picImg.classList.remove('hidden'); autoFetchedPic = ""; }
+                } else { picImg.classList.add('hidden'); autoFetchedPic = ""; }
+                
+            } catch(e) { console.error(e); }
+            showLoader(false);
+        } else { picImg.classList.add('hidden'); warnDiv.classList.add('hidden'); autoFetchedPic = ""; }
     }
 
     async function pickFromContacts() {
@@ -620,14 +754,11 @@
                         if(cleanMobile.length > 10) cleanMobile = cleanMobile.slice(-10); 
                         mobile = cleanMobile;
                     }
-                    
-                    // Fill input and trigger check manually
-                    document.getElementById('manual-cust-name').value = name;
-                    document.getElementById('manual-cust-phone').value = mobile;
+                    document.getElementById('manual-cust-name').value = name; document.getElementById('manual-cust-phone').value = mobile;
                     autoCheckUser(); 
                 }
-            } catch (ex) { alert("कॉन्टैक्ट खोलने की अनुमति नहीं मिली। नीचे खुद टाइप करें।"); }
-        } else { alert("ब्राउज़र सीधे कॉन्टैक्ट चुनने को सपोर्ट नहीं करता। नीचे टाइप करें।"); }
+            } catch (ex) { alert("कॉन्टैक्ट खोलने की अनुमति नहीं मिली। कृपया नाम खुद टाइप करें।"); }
+        } else { alert("आपका ब्राउज़र सीधे कॉन्टैक्ट चुनने को सपोर्ट नहीं करता। कृपया नीचे नाम और नंबर टाइप करें।"); }
     }
 
     function addManualCustomer() {
@@ -642,36 +773,45 @@
         if (!userData.customers) userData.customers = {};
         if (!userData.customers[name]) {
             userData.customers[name] = { mobile: mobile || "", balance: 0, transactions: [], linkedPic: autoFetchedPic };
-            await saveData(); openCustomerDetail(name);
+            await saveData(); 
+            openCustomerDetail(name);
         } else { alert("यह नाम पहले से मौजूद है!"); openCustomerDetail(name); }
     }
 
     // ==========================================
-    // 🔴 CUSTOMER DETAILS, EDIT & MARK DEFAULTER 
+    // 🔴 CUSTOMER DETAILS
     // ==========================================
     function openCustomerDetail(name) {
         currentCustomer = name;
         goToScreen('detail-screen');
         
-        // Show Name & Defaulter Flag in Header
         let custData = userData.customers[currentCustomer];
-        let defFlag = (custData.mobile && globalDefaulters[custData.mobile]) ? "🚩" : "";
+        let defSnap = globalDefaulters[custData.mobile]; 
+
+        let defFlag = (custData.mobile && defSnap) ? "🚩" : "";
         document.getElementById('detail-title').innerText = `${name} ${defFlag}`;
         document.getElementById('detail-phone').innerText = custData.mobile ? `📞 ${custData.mobile}` : "मोबाइल नंबर नहीं है";
+        
+        let markBtn = document.getElementById('mark-defaulter-btn');
+        let unmarkBtn = document.getElementById('unmark-defaulter-btn');
+        
+        if(custData.mobile && defSnap && defSnap.markedBy === currentUserPhone) {
+            markBtn.style.display = 'none'; unmarkBtn.style.display = 'block';
+        } else {
+            markBtn.style.display = 'block'; unmarkBtn.style.display = 'none';
+        }
         
         renderTransactions();
     }
 
-    // NEW: Edit Customer Name & Number
     async function editCustomerDetails() {
         let custData = userData.customers[currentCustomer];
-        
         let newName = prompt("कस्टमर का नाम बदलें:", currentCustomer);
         if(!newName || newName.trim() === "") return;
         newName = newName.trim();
         
         let newMobile = prompt("कस्टमर का मोबाइल नंबर बदलें:", custData.mobile || "");
-        if(newMobile === null) return; // cancelled
+        if(newMobile === null) return; 
         newMobile = newMobile.trim();
         
         if(newName !== currentCustomer) {
@@ -683,28 +823,63 @@
         
         userData.customers[currentCustomer].mobile = newMobile;
         await saveData();
-        alert("जानकारी सफलतापूर्वक बदल दी गई है!");
-        openCustomerDetail(currentCustomer); // refresh
+        alert("जानकारी बदल दी गई है!");
+        openCustomerDetail(currentCustomer); 
     }
 
-    // NEW: Mark Defaulter Globally
     async function markAsDefaulter() {
         let custData = userData.customers[currentCustomer];
-        if(!custData.mobile || custData.mobile.length < 10) return alert("डिफॉल्टर घोषित करने के लिए इस ग्राहक का 10 अंकों का मोबाइल नंबर सेव होना ज़रूरी है!");
+        if(!custData.mobile || custData.mobile.length < 10) return alert("इसके लिए ग्राहक का 10 अंकों का मोबाइल नंबर सेव होना ज़रूरी है!");
         
-        if(confirm(`क्या आप वाकई '${currentCustomer}' को फ्रॉड/डिफॉल्टर घोषित करना चाहते हैं?\n(यह जानकारी ऐप इस्तेमाल करने वाले सभी लोगों को दिखेगी!)`)) {
+        if(confirm(`क्या आप वाकई '${currentCustomer}' को फ्रॉड घोषित करना चाहते हैं?\n(यह जानकारी सभी लोगों को दिखेगी!)`)) {
             showLoader(true);
             try {
-                await db.ref('defaulters/' + custData.mobile).set({
-                    markedBy: currentUserPhone,
-                    date: new Date().toISOString()
-                });
-                globalDefaulters[custData.mobile] = true; // update local instantly
-                showLoader(false);
-                alert("इस नंबर को ग्लोबल डिफॉल्टर लिस्ट में डाल दिया गया है!");
-                openCustomerDetail(currentCustomer); // refresh UI to show flag
+                await db.ref('defaulters/' + custData.mobile).set({ markedBy: currentUserPhone, date: new Date().toISOString() });
+                globalDefaulters[custData.mobile] = { markedBy: currentUserPhone }; 
+                showLoader(false); alert("डिफॉल्टर लिस्ट में डाल दिया गया है!");
+                openCustomerDetail(currentCustomer); 
             } catch(e) { showLoader(false); alert("सर्वर एरर!"); }
         }
+    }
+    
+    async function unmarkDefaulter() {
+        let custData = userData.customers[currentCustomer];
+        if(!custData.mobile) return;
+        
+        if(confirm(`क्या आप वाकई '${currentCustomer}' को डिफॉल्टर लिस्ट से हटाना चाहते हैं?`)) {
+            showLoader(true);
+            try {
+                await db.ref('defaulters/' + custData.mobile).remove();
+                delete globalDefaulters[custData.mobile]; 
+                showLoader(false); alert("डिफॉल्टर लिस्ट से हटा दिया गया है!");
+                openCustomerDetail(currentCustomer); 
+            } catch(e) { showLoader(false); alert("सर्वर एरर या अनुमति नहीं है!"); }
+        }
+    }
+    
+    async function openDefaulterCenter() {
+        goToScreen('defaulter-center-screen');
+        showLoader(true);
+        try {
+            let snap = await db.ref('defaulters/' + currentUserPhone).once('value');
+            let markedDiv = document.getElementById('my-defaulter-status');
+            let notMarkedDiv = document.getElementById('not-defaulter-status');
+            
+            if(snap.exists()) {
+                let data = snap.val();
+                let markedByPhone = data.markedBy;
+                let markedDate = new Date(data.date).toLocaleDateString();
+                
+                let nameSnap = await db.ref(`users/${markedByPhone}/name`).once('value');
+                let markerName = nameSnap.exists() ? nameSnap.val() : markedByPhone;
+
+                document.getElementById('defaulter-marked-by-text').innerHTML = `🚩 आपको <u>${markerName}</u> द्वारा डिफॉल्टर घोषित किया गया है। (${markedDate})`;
+                markedDiv.classList.remove('hidden'); notMarkedDiv.classList.add('hidden');
+            } else {
+                markedDiv.classList.add('hidden'); notMarkedDiv.classList.remove('hidden');
+            }
+        } catch(e) { console.error(e); }
+        showLoader(false);
     }
 
     function renderTransactions() {
@@ -713,8 +888,8 @@
         if(!custData.transactions) custData.transactions = [];
         
         let balDiv = document.getElementById('detail-balance');
-        if(custData.balance > 0) balDiv.innerHTML = `<span style="color:#128C7E">₹${custData.balance} (मिलेंगे)</span>`;
-        else if (custData.balance < 0) balDiv.innerHTML = `<span style="color:#d32f2f">₹${Math.abs(custData.balance)} (देने हैं)</span>`;
+        if(custData.balance > 0) balDiv.innerHTML = `<span style="color:#d32f2f">₹${custData.balance} (मिलेंगे)</span>`;
+        else if (custData.balance < 0) balDiv.innerHTML = `<span style="color:#128C7E">₹${Math.abs(custData.balance)} (देने हैं)</span>`;
         else balDiv.innerHTML = `<span style="color:#333">₹0 (हिसाब बराबर)</span>`;
 
         let deleteBtn = document.getElementById('delete-customer-btn');
@@ -722,10 +897,14 @@
 
         custData.transactions.forEach(txn => {
             let isGiven = txn.type === 'give';
+            let amountText = `₹${txn.amount}`;
+            let infoText = isGiven ? 'आपने दिए' : 'आपको मिले';
+            let txColor = isGiven ? '#d32f2f' : '#128C7E';
+            
             txnList.innerHTML += `
                 <div class="txn-card ${isGiven ? 'given' : 'received'}">
-                    <p class="txn-amount" style="color: ${isGiven ? '#d32f2f' : '#128C7E'}">₹${txn.amount}</p>
-                    <p style="font-size: 12px; margin:0 0 5px 0; color: #555;">${isGiven ? 'आपने दिए' : 'आपको मिले'}</p>
+                    <p class="txn-amount" style="color: ${txColor}">${amountText}</p>
+                    <p style="font-size: 12px; margin:0 0 5px 0; color: #555;">${infoText}</p>
                     <p class="txn-date">${txn.date}</p>
                 </div>
             `;
@@ -761,7 +940,7 @@
         if(!cust.mobile) return alert("इस कस्टमर का मोबाइल नंबर सेव नहीं है।");
         let msg = "";
         if(cust.balance > 0) {
-            msg = `*रिमाइंडर / Payment Reminder*\n\nनमस्ते ${currentCustomer},\nआपके खाते का बकाया ₹${cust.balance} है। कृपया भुगतान करें।\n`;
+            msg = `*रिमाइंडर*\n\nनमस्ते ${currentCustomer},\nआपका बकाया ₹${cust.balance} है। कृपया भुगतान करें।\n`;
             if(userData.upiId && userData.upiId.trim() !== "") msg += `\n*पेमेंट लिंक:*\nupi://pay?pa=${userData.upiId}&pn=${encodeURIComponent(userData.name || 'Store')}&am=${cust.balance}&cu=INR`;
         } 
         else if (cust.balance < 0) msg = `नमस्ते ${currentCustomer},\nमुझे आपको ₹${Math.abs(cust.balance)} देने हैं।`;
