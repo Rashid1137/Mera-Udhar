@@ -246,7 +246,7 @@
                 मेरा उधार
             </div>
             <div class="header-icons">
-                <span onclick="shareApp()" title="ऐप शेयर करें">🔗</span>
+                <span onclick="shareApp()" title="ऐप शेयर करें (APK)">🔗</span>
                 <span onclick="goToScreen('settings-screen')" title="सेटिंग्स">⚙️</span>
                 <span onclick="doLogoutBtn()" title="लॉगआउट">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -375,7 +375,7 @@
     // ==========================================
     // 🔴 APP VERSION (Update Notification Logic)
     // ==========================================
-    const CURRENT_APP_VERSION = "2.5"; // (हर बार नया अपडेट देने पर इसे बदल दें)
+    const CURRENT_APP_VERSION = "2.8"; // (हर बार नया अपडेट देने पर इसे बदल दें)
 
     // ==========================================
     // 🔴 FIREBASE CONFIGURATION 
@@ -480,31 +480,59 @@
     }
 
     // ==========================================
-    // 🔴 NEW: SHARE APP FUNCTION
+    // 🔴 FILE SHARE (APK SHARE LOGIC)
     // ==========================================
-    function shareApp() {
-        let appUrl = window.location.href;
-        let shareText = 'अपने लेन-देन का सुरक्षित और डिजिटल हिसाब रखने के लिए "मेरा उधार" ऐप का इस्तेमाल करें! तुरंत क्लिक करें: \n' + appUrl;
-        
-        if (navigator.share) {
-            navigator.share({
-                title: 'मेरा उधार - डिजिटल हिसाब',
-                text: shareText
-            }).catch(console.error);
-        } else {
-            // Fallback for browsers that don't support native sharing
-            let fallbackUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
-            window.open(fallbackUrl, '_blank');
+    async function shareApp() {
+        showLoader(true);
+        try {
+            // हम 'mera-udhar.apk' नाम की फाइल को उसी फोल्डर से फेच कर रहे हैं
+            const response = await fetch('mera-udhar.apk');
+            if (!response.ok) {
+                throw new Error("APK_NOT_FOUND");
+            }
+            
+            const blob = await response.blob();
+            const file = new File([blob], 'MeraUdhar.apk', { type: 'application/vnd.android.package-archive' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                showLoader(false);
+                await navigator.share({
+                    files: [file],
+                    title: 'मेरा उधार ऐप',
+                    text: 'मेरा उधार ऐप (APK) इंस्टॉल करें और अपना डिजिटल हिसाब रखें!'
+                });
+            } else {
+                throw new Error("SHARE_NOT_SUPPORTED");
+            }
+        } catch (error) {
+            showLoader(false);
+            
+            // अगर APK नहीं मिलती या ब्राउज़र सपोर्ट नहीं करता, तो डायरेक्ट लिंक भेजें
+            let appUrl = window.location.href;
+            let baseUrl = appUrl.substring(0, appUrl.lastIndexOf('/'));
+            if(baseUrl === "") baseUrl = appUrl;
+            let finalApkLink = baseUrl + '/mera-udhar.apk';
+            
+            let shareText = 'मेरा उधार ऐप डाउनलोड करें! नीचे दिए गए लिंक पर क्लिक करते ही APK फाइल डाउनलोड हो जाएगी: \n\n' + finalApkLink;
+            
+            if (navigator.share) {
+                navigator.share({ title: 'मेरा उधार ऐप', text: shareText }).catch(console.error);
+            } else {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
+            }
+            
+            if(error.message === "APK_NOT_FOUND") {
+                alert("ध्यान दें: असली APK फाइल शेयर करने के लिए आपको अपनी GitHub रिपॉजिटरी में 'mera-udhar.apk' नाम से अपनी फाइल अपलोड करनी होगी।");
+            }
         }
     }
 
     // ==========================================
-    // 🔴 NEW: CHECK APP UPDATE FUNCTION
+    // 🔴 CHECK APP UPDATE
     // ==========================================
     function checkAppUpdate() {
         let savedVersion = localStorage.getItem('udhar_app_version');
         if(savedVersion !== CURRENT_APP_VERSION) {
-            // Show update modal
             document.getElementById('update-modal').classList.remove('hidden');
             localStorage.setItem('udhar_app_version', CURRENT_APP_VERSION);
         }
@@ -558,7 +586,7 @@
             goToScreen('home-screen');
             updateHeaderProfilePic(); 
             setupActivityDetectors(); 
-            checkAppUpdate(); // Check for app update on successful login
+            checkAppUpdate(); 
         } catch(e) { showLoader(false); alert("डेटाबेस एरर। Firebase Config चेक करें।"); }
     }
 
@@ -707,7 +735,7 @@
     }
 
     // ==========================================
-    // 🔴 NEW: BEEP TONE GENERATOR
+    // 🔴 REMINDER ALARM (BEEP) & POPUP
     // ==========================================
     function playBeepTone() {
         try {
@@ -715,21 +743,18 @@
             let oscillator = audioCtx.createOscillator();
             let gainNode = audioCtx.createGain();
             
-            oscillator.type = 'triangle'; // Beep sound
-            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); // 800Hz freq
+            oscillator.type = 'triangle'; 
+            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); 
             
             oscillator.connect(gainNode);
             gainNode.connect(audioCtx.destination);
             
             oscillator.start();
-            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 1.5); // Beep for 1.5s
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 1.5); 
             oscillator.stop(audioCtx.currentTime + 1.5);
-        } catch(e) { console.log("Audio not supported or blocked by browser."); }
+        } catch(e) { console.log("Audio API blocked or not supported."); }
     }
 
-    // ==========================================
-    // 🔴 NEW: REMINDER ALARM & POPUP
-    // ==========================================
     function checkReminderAlert() {
         let today = new Date(); 
         let reminderDiv = document.getElementById('reminder-banner');
@@ -738,18 +763,15 @@
             reminderDiv.classList.remove('hidden'); 
             document.getElementById('banner-amount').innerText = `₹${totalOutstanding}`;
             
-            // Check if we already showed popup and beeped today
             let lastReminded = localStorage.getItem(`lastAutoReminder_${currentUserPhone}`);
             let dateString = today.toDateString();
             
             if (lastReminded !== dateString) {
-                // Show modal and play beep with a slight delay
                 setTimeout(() => {
                     playBeepTone();
                     document.getElementById('reminder-popup-amount').innerText = `₹${totalOutstanding}`;
                     document.getElementById('reminder-modal').classList.remove('hidden');
                 }, 800);
-                
                 localStorage.setItem(`lastAutoReminder_${currentUserPhone}`, dateString);
             }
         } else { 
@@ -805,7 +827,7 @@
     }
 
     // ==========================================
-    // 🔴 ADD CUSTOMER (FIXED REFRESH BUG)
+    // 🔴 ADD CUSTOMER (WITH AUTO REFRESH)
     // ==========================================
     let autoFetchedPic = "";
 
@@ -885,9 +907,7 @@
         if (!userData.customers[name]) {
             userData.customers[name] = { mobile: mobile || "", balance: 0, transactions: [], linkedPic: autoFetchedPic };
             await saveData(); 
-            
-            // FIX: Refresh the list immediately so the zero-balance customer appears
-            renderHomeScreen();
+            renderHomeScreen(); 
         } else { 
             alert("यह नाम पहले से मौजूद है!"); 
         }
