@@ -49,7 +49,7 @@
         .summary-item { text-align: center; flex: 1; }
         .summary-item:first-child { border-right: 1px solid #eee; }
         
-        /* COLORS */
+        /* COLORS (Red = Udhar Diya, Green = Udhar Liya) */
         .text-red { color: #d32f2f; font-weight: bold; font-size: 20px; margin-top: 5px; }
         .text-green { color: #128C7E; font-weight: bold; font-size: 20px; margin-top: 5px; }
         
@@ -120,6 +120,29 @@
 <div id="loader" class="hidden">
     <div class="spinner"></div>
     <p style="margin-top: 15px; font-weight: bold; color: #128C7E;">कृपया प्रतीक्षा करें...</p>
+</div>
+
+<div id="update-modal" class="modal-overlay hidden">
+    <div class="modal-box" style="text-align:center;">
+        <div style="font-size: 50px;">🎉</div>
+        <h3 style="color:#128C7E; margin-top:10px;">नया अपडेट!</h3>
+        <p style="color:#444;">आपकी एप्लीकेशन सफलतापूर्वक अपडेट हो चुकी है। लेटेस्ट फीचर्स का आनंद लें!</p>
+        <button class="btn-main" onclick="closeUpdateModal()">ओके (OK)</button>
+    </div>
+</div>
+
+<div id="reminder-modal" class="modal-overlay hidden">
+    <div class="modal-box" style="text-align:center;">
+        <div style="font-size: 50px; animation: pulse 1s infinite;">🔔</div>
+        <h3 style="color:#ff9800; margin-top:10px;">आज रिमाइंडर का दिन है!</h3>
+        <p style="font-size: 15px; color:#444;">आपका कुल बकाया:</p>
+        <p style="font-size: 28px; font-weight: bold; color:#d32f2f; margin:5px 0;" id="reminder-popup-amount">₹0</p>
+        <p style="font-size:13px; color:#666;">क्या आप अभी सभी ग्राहकों को WhatsApp पर रिमाइंडर भेजना चाहते हैं?</p>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button class="btn-main" style="background:#888; flex:1; padding:12px;" onclick="closeReminderModal()">बाद में</button>
+            <button class="btn-main" style="flex:1; padding:12px;" onclick="sendAllReminders(); closeReminderModal();">अभी भेजें</button>
+        </div>
+    </div>
 </div>
 
 <div id="add-customer-modal" class="modal-overlay hidden">
@@ -223,6 +246,7 @@
                 मेरा उधार
             </div>
             <div class="header-icons">
+                <span onclick="shareApp()" title="ऐप शेयर करें">🔗</span>
                 <span onclick="goToScreen('settings-screen')" title="सेटिंग्स">⚙️</span>
                 <span onclick="doLogoutBtn()" title="लॉगआउट">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -349,6 +373,11 @@
 
 <script>
     // ==========================================
+    // 🔴 APP VERSION (Update Notification Logic)
+    // ==========================================
+    const CURRENT_APP_VERSION = "2.5"; // (हर बार नया अपडेट देने पर इसे बदल दें)
+
+    // ==========================================
     // 🔴 FIREBASE CONFIGURATION 
     // ==========================================
     const firebaseConfig = {
@@ -372,7 +401,7 @@
     let resetTargetPhone = null; 
     let globalDefaulters = {}; 
     let inactivityTimer; 
-    const AUTO_LOGOUT_TIME = 60 * 1000; // 1 Minute in milliseconds
+    const AUTO_LOGOUT_TIME = 60 * 1000; // 1 Minute
     
     const DEFAULT_PIC = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23ccc'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
@@ -391,7 +420,6 @@
             document.getElementById('detail-screen').classList.toggle('hidden', screenId !== 'detail-screen');
             document.getElementById('defaulter-center-screen').classList.toggle('hidden', screenId !== 'defaulter-center-screen');
             
-            // FIX: Refresh the customer list every time we come back to the home screen
             if (screenId === 'home-screen' && currentUserPhone && userData) {
                 renderHomeScreen();
             }
@@ -451,6 +479,41 @@
         return colors[Math.abs(hash) % colors.length];
     }
 
+    // ==========================================
+    // 🔴 NEW: SHARE APP FUNCTION
+    // ==========================================
+    function shareApp() {
+        let appUrl = window.location.href;
+        let shareText = 'अपने लेन-देन का सुरक्षित और डिजिटल हिसाब रखने के लिए "मेरा उधार" ऐप का इस्तेमाल करें! तुरंत क्लिक करें: \n' + appUrl;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: 'मेरा उधार - डिजिटल हिसाब',
+                text: shareText
+            }).catch(console.error);
+        } else {
+            // Fallback for browsers that don't support native sharing
+            let fallbackUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+            window.open(fallbackUrl, '_blank');
+        }
+    }
+
+    // ==========================================
+    // 🔴 NEW: CHECK APP UPDATE FUNCTION
+    // ==========================================
+    function checkAppUpdate() {
+        let savedVersion = localStorage.getItem('udhar_app_version');
+        if(savedVersion !== CURRENT_APP_VERSION) {
+            // Show update modal
+            document.getElementById('update-modal').classList.remove('hidden');
+            localStorage.setItem('udhar_app_version', CURRENT_APP_VERSION);
+        }
+    }
+    
+    function closeUpdateModal() {
+        document.getElementById('update-modal').classList.add('hidden');
+    }
+
     async function register() {
         let name = document.getElementById('reg-name').value.trim();
         let email = document.getElementById('reg-email').value.trim();
@@ -491,9 +554,11 @@
             let defSnap = await db.ref('defaulters').once('value');
             if(defSnap.exists()) globalDefaulters = defSnap.val();
 
-            showLoader(false); goToScreen('home-screen');
+            showLoader(false); 
+            goToScreen('home-screen');
             updateHeaderProfilePic(); 
             setupActivityDetectors(); 
+            checkAppUpdate(); // Check for app update on successful login
         } catch(e) { showLoader(false); alert("डेटाबेस एरर। Firebase Config चेक करें।"); }
     }
 
@@ -505,7 +570,6 @@
             ['mousemove', 'mousedown', 'keypress', 'touchstart', 'scroll', 'click'].forEach(event => {
                 document.addEventListener(event, resetInactivityTimer, {passive: true});
             });
-            // Also logout if app goes to background for more than 1 min
             document.addEventListener('visibilitychange', () => {
                 if (document.visibilityState === 'visible') resetInactivityTimer();
             });
@@ -532,7 +596,7 @@
         document.getElementById('login-phone').value = ''; 
         
         goToScreen('login-screen');
-        alert("सुरक्षा कारणों से 1 मिनट से कोई काम न होने पर आपको लॉगआउट कर दिया गया है।");
+        alert("सुरक्षा कारणों से 1 मिनट से कोई गतिविधि न होने पर आपको लॉगआउट कर दिया गया है।");
     }
 
     function doLogoutBtn() {
@@ -584,7 +648,6 @@
         if(userData.profilePic && userData.profilePic !== "") { headPic.src = userData.profilePic; headPic.style.display = 'block'; } 
         else headPic.style.display = 'none';
         
-        // Populate inputs
         document.getElementById('my-name').value = userData.name || "";
         document.getElementById('my-email').value = userData.email || "";
         document.getElementById('my-phone').value = currentUserPhone || "";
@@ -643,11 +706,59 @@
         updateHeaderProfilePic(); window.history.back(); checkReminderAlert(); 
     }
 
+    // ==========================================
+    // 🔴 NEW: BEEP TONE GENERATOR
+    // ==========================================
+    function playBeepTone() {
+        try {
+            let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            let oscillator = audioCtx.createOscillator();
+            let gainNode = audioCtx.createGain();
+            
+            oscillator.type = 'triangle'; // Beep sound
+            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); // 800Hz freq
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.start();
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 1.5); // Beep for 1.5s
+            oscillator.stop(audioCtx.currentTime + 1.5);
+        } catch(e) { console.log("Audio not supported or blocked by browser."); }
+    }
+
+    // ==========================================
+    // 🔴 NEW: REMINDER ALARM & POPUP
+    // ==========================================
     function checkReminderAlert() {
-        let today = new Date(); let reminderDiv = document.getElementById('reminder-banner');
+        let today = new Date(); 
+        let reminderDiv = document.getElementById('reminder-banner');
+        
         if (today.getDate() === parseInt(userData.reminderDate) && totalOutstanding > 0) {
-            reminderDiv.classList.remove('hidden'); document.getElementById('banner-amount').innerText = `₹${totalOutstanding}`;
-        } else { reminderDiv.classList.add('hidden'); }
+            reminderDiv.classList.remove('hidden'); 
+            document.getElementById('banner-amount').innerText = `₹${totalOutstanding}`;
+            
+            // Check if we already showed popup and beeped today
+            let lastReminded = localStorage.getItem(`lastAutoReminder_${currentUserPhone}`);
+            let dateString = today.toDateString();
+            
+            if (lastReminded !== dateString) {
+                // Show modal and play beep with a slight delay
+                setTimeout(() => {
+                    playBeepTone();
+                    document.getElementById('reminder-popup-amount').innerText = `₹${totalOutstanding}`;
+                    document.getElementById('reminder-modal').classList.remove('hidden');
+                }, 800);
+                
+                localStorage.setItem(`lastAutoReminder_${currentUserPhone}`, dateString);
+            }
+        } else { 
+            reminderDiv.classList.add('hidden'); 
+        }
+    }
+    
+    function closeReminderModal() {
+        document.getElementById('reminder-modal').classList.add('hidden');
     }
 
     function renderHomeScreen() {
@@ -694,7 +805,7 @@
     }
 
     // ==========================================
-    // 🔴 ADD CUSTOMER
+    // 🔴 ADD CUSTOMER (FIXED REFRESH BUG)
     // ==========================================
     let autoFetchedPic = "";
 
@@ -774,8 +885,12 @@
         if (!userData.customers[name]) {
             userData.customers[name] = { mobile: mobile || "", balance: 0, transactions: [], linkedPic: autoFetchedPic };
             await saveData(); 
-            openCustomerDetail(name);
-        } else { alert("यह नाम पहले से मौजूद है!"); openCustomerDetail(name); }
+            
+            // FIX: Refresh the list immediately so the zero-balance customer appears
+            renderHomeScreen();
+        } else { 
+            alert("यह नाम पहले से मौजूद है!"); 
+        }
     }
 
     // ==========================================
